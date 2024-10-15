@@ -32,7 +32,7 @@ class VehicleHashTable:
         output = ""
         for i in self.hash_array:
             if i.get_state() == 1:
-                output += (f"{i.get_key()}: {i.get_value()}\n")
+                output += (f"{i.get_value()}\n")
         return output
 
     def put(self, key, value):
@@ -73,7 +73,7 @@ class VehicleHashTable:
         if hash_index:
             return self.hash_array[hash_index].get_value()
         else:
-            print(f"Key {key} was not found.")
+            raise VehicleNotFoundError(f"Key {key} was not found.")
 
     def remove(self, key):
         self.size_down_check()
@@ -83,7 +83,7 @@ class VehicleHashTable:
             self.hash_array[hash_index].set_as_removed()
             self.count -= 1
         else:
-            print(f"Key {key} was not found for deletion.")
+            raise VehicleNotFoundError(f"Key {key} was not found for deletion.")
 
     def get_lf(self):
         lf = self.count / self.hash_array.size
@@ -114,12 +114,11 @@ class VehicleHashTable:
                     give_up = True
 
         if not found:
-            print(f"Key {key} was not found")
-            return None
+            raise VehicleNotFoundError(f"Key {key} was not found.")
 
         return hash_index
 
-    def export_hash_table(self, filename):
+    def export_hash_table_to_file(self, filename):
         with open(filename, "w") as file:
             for entry in self.hash_array:
                 if entry.get_state() == 1:
@@ -194,14 +193,5 @@ class VehicleHashTable:
                     ii += 2
         return prime_val
 
-h = VehicleHashTable(10)
-h.put("111", "Test Entry #1")
-h.put("222", "Test Entry #2")
-h.put("333", "Test Entry #3")
-h.put("444", "Test Entry #4")
-h.put("555", "Test Entry #5")
-h.put("666", "Test Entry #6")
-h.put("777", "Test Entry #7")
-h.put("888", "Test Entry #8")
-h.put("999", "Test Entry #9")
-h.put("1000", "Test Entry #10")
+class VehicleNotFoundError(Exception):
+    pass

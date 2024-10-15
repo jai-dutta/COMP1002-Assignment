@@ -57,10 +57,10 @@ class VehicleSortHeap(MinHeap):
 
         return sorted_vehicles
 
-    def find_nearest_vehicle(self):
+    def find_nearest_vehicle(self, vehicles):
         if self.count == 0:
             raise HeapEmptyException("Heap empty")
-        return self.heap[0]
+        return self.heapsort_vehicles(vehicles)[0]
 
 
 def quick_sort(arr):
@@ -89,7 +89,9 @@ def do_partitioning(arr, left_index, right_index, pivot_index):
     arr[right_index], arr[store_index] = arr[store_index], arr[right_index]
     return store_index
 
-
+def find_highest_battery_level(vehicles):
+    quick_sort(vehicles)
+    return vehicles[0]
 
 
 
@@ -102,26 +104,3 @@ for i in range(15):
     vehicles.append(vehicle)
     vehicles[i].set_battery_level(randint(0,100))
     vehicles[i].set_distance_to_destination(randint(0,100))
-
-s = time.time()
-sorted_v = quick_sort(vehicles)
-e = time.time()
-for i in sorted_v:
-    pass
-    #print(i.get_battery_level())
-
-print("Time: ", e - s,"s")
-
-s1 = time.time()
-h = VehicleSortHeap(len(vehicles))
-#sorted_v = h.heapsort_vehicles(vehicles)
-e1 = time.time()
-#for i in sorted_v:
-#    print(i, i.get_distance_to_destination())
-for v in vehicles:
-    h.add(v.get_distance_to_destination(), v)
-cv = h.find_nearest_vehicle()
-print(cv.get_vehicle().get_distance_to_destination(), cv)
-
-print("Quick Sort: Time: ", e - s,"s")
-print("Heap Sort: Time: ", e1 - s1,"s")
