@@ -6,15 +6,15 @@
 # This file contains the class for Heap and HeapEntry
 
 import numpy as np
+from Vehicle import Vehicle
 
-
-class HeapEntry:
-    def __init__(self, priority: int, value: object):
+class VehicleEntry:
+    def __init__(self, priority: float, vehicle: Vehicle):
         self.priority = priority
-        self.value = value
+        self.vehicle = vehicle
 
     def __str__(self):
-        return f"Priority: {self.priority} | Value: {self.value}"
+        return f"Priority: {self.priority} | Vehicle ID: {self.vehicle.get_id()}"
 
     def get_priority(self):
         return self.priority
@@ -22,13 +22,13 @@ class HeapEntry:
     def set_priority(self, priority):
         self.priority = priority
 
-    def get_value(self):
-        return self.value
+    def get_vehicle(self):
+        return self.vehicle
 
-    def set_value(self, value: object):
-        self.value = value
+    def set_vehicle(self, vehicle):
+        self.vehicle = vehicle
 
-class Heap:
+class MinHeap:
     def __init__(self, size):
         self.size = size
         self.heap = np.empty(size, dtype=object)
@@ -38,7 +38,7 @@ class Heap:
         if self.size == self.count:
             raise HeapFullException()
 
-        new_entry = HeapEntry(priority, value)
+        new_entry = VehicleEntry(priority, value)
         self.heap[self.count] = new_entry
         self.trickle_up(self.count)
         self.count += 1
@@ -99,7 +99,28 @@ class Heap:
 
     def get_count(self):
         return self.count
+    
+    def heapsort_vehicles(self, vehicles):
+        # Clear the existing heap
+        self.count = 0
+        self.heap = np.empty(len(vehicles), dtype=object)
 
+        # Add all vehicles to the heap
+        for vehicle in vehicles:
+            self.add(vehicle.get_distance_to_destination(), vehicle)
+
+        # Extract vehicles in sorted order
+        sorted_vehicles = []
+        while self.count > 0:
+            entry = self.remove()
+            sorted_vehicles.append(entry.get_vehicle())
+
+        return sorted_vehicles
+
+    def find_nearest_vehicle(self):
+        if self.count == 0:
+            raise HeapEmptyException("No vehicles in the heap")
+        return self.heap[0].get_vehicle()
 
 class HeapFullException(Exception):
     def __init__(self, message="Heap is full"):
