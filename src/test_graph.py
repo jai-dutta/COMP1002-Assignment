@@ -62,27 +62,11 @@ def test_is_adjacent(sample_graph):
     assert sample_graph.is_adjacent('A', 'B')
     assert not sample_graph.is_adjacent('A', 'C')
 
-def test_bfs_empty_graph(empty_graph):
-    with pytest.raises(GraphEmptyError):
-        empty_graph.bfs()
-
-def test_dfs_empty_graph(empty_graph):
-    with pytest.raises(GraphEmptyError):
-        empty_graph.dfs()
-
-def test_bfs(sample_graph, capsys):
-    sample_graph.bfs()
-    captured = capsys.readouterr()
-    assert "A: 1" in captured.out
-    assert "B: 2" in captured.out
-    assert "C: 3" in captured.out
-
-def test_dfs(sample_graph, capsys):
-    sample_graph.dfs()
-    captured = capsys.readouterr()
-    assert "A: 1" in captured.out
-    assert "B: 2" in captured.out
-    assert "C: 3" in captured.out
+def test_dijkstra(sample_graph):
+    weight, path = sample_graph.dijkstra('A', 'C')
+    assert weight == 3.0
+    for vertice in path:
+        assert vertice.get_label() in ['A', 'B', 'C']
 
 def test_display_as_list(sample_graph, capsys):
     sample_graph.display_as_list()

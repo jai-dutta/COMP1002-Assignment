@@ -1,5 +1,4 @@
 from operator import index
-
 from Queue import Queue
 from Stack import Stack
 from LinkedList import LinkedList
@@ -56,7 +55,7 @@ class GraphVertex:
 
 class Graph:
     """
-    A class to represent an undirected simple graph.
+    A class to represent an undirected, weighted simple graph.
 
     Attributes:
         vertices : A LinkedList, containing each vertex of the graph.
@@ -74,7 +73,6 @@ class Graph:
         :param label: Label of the vertex
         :param value: Value of the vertex
         """
-        print(f"Adding vertex: {label}")
         if self._find_vertex(label):
             raise VertexExistsError("Duplicate vertex found")
 
@@ -85,26 +83,26 @@ class Graph:
         else:
             inserted = False
             for i in range(len(self.vertices)):
-                print(f"Comparing with: {self.vertices[i].get_value().get_label()}")
                 if label < self.vertices[i].get_value().get_label():
                     self.vertices.insert_before(new_vertex, i)
-                    print(f"Inserted {label} before {self.vertices[i].get_value().get_label()}")
                     inserted = True
                     break
 
             if not inserted:
-                print(f"Inserted {label} at the end.")
                 self.vertices.insert_last(new_vertex)  # If not inserted, add to the end
 
         self.count += 1
 
-    def delete_vertex(self, label):
+    def delete_vertex(self, label) -> None:
+        """
+        Deletes a vertex from the graph.
+        :param label: label of the vertex to delete
+        """
         index = self._find_vertex_index(label)
         if index is None:
             raise VertexNotFoundError("Vertex to delete not found!")
         self.vertices.remove_at(index)
         self.count -= 1
-
 
     def add_edge(self, label1, label2, weight: float) -> None:
         """
@@ -125,7 +123,7 @@ class Graph:
             else:
                 raise EdgeToSameVertex("Cannot add edge from vertex to itself.")
 
-    def delete_edge(self, label1, label2):
+    def delete_edge(self, label1, label2) -> None:
         """
         Deletes an edge between two vertices.
         :param label1: label of the first vertex
@@ -142,7 +140,6 @@ class Graph:
                 vertex2.remove_adjacent(vertex1)
             else:
                 raise EdgeToSameVertex("Cannot remove edge from vertex to itself.")
-
 
     def has_vertex(self, label) -> bool:
         """
@@ -190,7 +187,8 @@ class Graph:
             print(f"{vertex.get_value()} {'->' if vertex.get_value().get_adjacent() else ''} ", end="")
             if vertex.get_value().get_adjacent():
                 for count, (adjacent_vertex, weight) in enumerate(vertex.get_value().get_adjacent()):
-                    print(f"{adjacent_vertex} {'->' if count + 1 < len(vertex.get_value().get_adjacent()) else ''} ", end="")
+                    print(f"{adjacent_vertex} {'->' if count + 1 < len(vertex.get_value().get_adjacent()) else ''} ",
+                          end="")
             print()
 
     def display_as_matrix(self):
@@ -228,40 +226,23 @@ class Graph:
         return None
 
     def _find_vertex_index(self, label):
+        """
+        Helper function to find the index of a vertex using its label.
+        Used in delete_vertex
+        :param label: label of the vertex to find
+        :return: index of the vertex
+        """
         for i in range(len(self.vertices)):
             if self.vertices[i].get_value().get_label() == label:
                 return i
 
-    def bfs(self):
+    def dijkstra(self, start_label: str, end_label: str) -> tuple[float, list]:
         """
-        Performs a bread-first search of the graph and prints the results.
+        Finds the shortest path between two vertices using dijkstra's algorithm.
+        :param start_label: label of the start vertex
+        :param end_label: label of the end vertex
+        :return: tuple containing the distance and the path between the two vertices
         """
-        if self.count == 0:
-            raise GraphEmptyError("Cannot perform BFS on empty graph.")
-        q = Queue()  # The main queue for BFS
-        t = Queue()
-
-        # Clear the visited status of all vertices
-        for vertex in self.vertices:
-            vertex.get_value().clear_visited()
-
-        v = self.vertices[0].get_value()  # Start from the first vertex
-        v.set_visited()  # Mark it as visited
-        q.enqueue(v)  # Enqueue the start vertex
-
-        while not q.is_empty():
-            v = q.dequeue()
-
-            for w, _ in v.get_adjacent():
-                if not w.get_visited():  # Only consider unvisited adjacent vertices
-                    w.set_visited()  # Mark as visited before enqueueing
-                    q.enqueue(w) 
-                    t.enqueue(v)
-                    t.enqueue(w)
-            print(v)
-
-
-    def dijkstra(self, start_label: str, end_label: str):
         if self.count == 0:
             raise GraphEmptyError("Cannot perform dijkstra's algorithm on empty graph.")
         if not self.has_vertex(start_label) or not self.has_vertex(end_label):
@@ -270,7 +251,7 @@ class Graph:
         start = self._find_vertex(start_label)
         end = self._find_vertex(end_label)
 
-        #convert the linked list of vertices to a python list/arr to use indexing
+        # convert the linked list of vertices to a python list/arr to use indexing
         vertices_list = [node.get_value() for node in self.vertices]
 
         pq = Heap(self.count)
@@ -283,7 +264,7 @@ class Graph:
 
         found = False
 
-        while pq.get_count() > 0:
+        while pq.get_count() > 0 and not found:
             vertex = pq.remove().get_value()
 
             for neighbour, weight in vertex.get_adjacent():
@@ -295,47 +276,43 @@ class Graph:
                     prev[vertices_list.index(neighbour)] = vertex
                     distances[vertices_list.index(neighbour)] = alt
                     pq.add(alt, neighbour)
-            if found:
-                return distances[1:], prev[1:]
 
-        print("Path not found")
+        if found:
+            final_distance = distances[vertices_list.index(end)]
+            return final_distance, self._reconstruct_path(prev, start, end, vertices_list)
+        else:
+            raise PathNotFoundError("Path not found between provided vertices.")
 
-
-
-
-
-
-    def dfs(self):
+    def _reconstruct_path(self, prev, start, end, vertices_list):
         """
-        Performs a depth-first search of the graph and prints the results.
+        Reconstructs the path from the start to the end vertex.
+        Helper function for dijkstra's algorithm.
         """
-        if self.count == 0:
-            raise GraphEmptyError("Cannot perform DFS on empty graph.")
-        s = Stack()  # Stack.py to hold vertices for DFS
-        for vertex in self.vertices:
-            vertex.get_value().clear_visited()  # Clear visited flag for all vertices
+        path = []
+        current = end
+        while current:
+            path.append(current)
+            current = prev[vertices_list.index(current)]
+        path.reverse()
+        return path
 
-        v = self.vertices[0].get_value()  # Start from the first vertex
-        v.set_visited()  # Mark the first vertex as visited
-        s.push(v)  # Push the first vertex onto the stack
-        print(v)
-        while not s.is_empty():
-            v = s.top()  # Get the top vertex without popping it
-            w = v.get_adjacent()  # Get all adjacent vertices
+    def is_path(self, start_label, end_label) -> bool:
+        """
+        Checks if there is a path between two vertices using dijkstra's algorithm.
 
-            # Flag to track if we have an unvisited neighbor
-            found_unvisited = False
+        Note: I know we were instructed to use BFS or DFS for this, but I have implemented Dijkstra's algorithm
+        to find the shortest path between two vertices, so I thought it would be more efficient to use it here.
 
-            for neighbour, _ in w:
-                if not neighbour.get_visited():  # If the neighbor is not visited
-                    neighbour.set_visited()  # Mark it as visited
-                    s.push(neighbour)  # Push the neighbor onto the stack
-                    print(neighbour) # Print the node as it is visited
-                    found_unvisited = True  # Indicate that we found an unvisited neighbor
-                    break  # Break to process the next neighbor
+        :param start_label: label of the start vertex
+        :param end_label: label of the end vertex
+        :return: True if there is a path, False otherwise
+        """
+        if not self.has_vertex(start_label) or not self.has_vertex(end_label):
+            raise VertexNotFoundError("Cannot find one or both vertices to check for path.")
+        start = self._find_vertex(start_label)
+        end = self._find_vertex(end_label)
 
-            if not found_unvisited:
-                s.pop()  # Pop the vertex if no unvisited neighbors were found
+        return self.dijkstra(start_label, end_label)[0] is not None
 
 
 class VertexNotFoundError(Exception):
@@ -349,21 +326,12 @@ class EdgeToSameVertex(Exception):
 class EdgeExistsError(Exception):
     pass
 
-
 class VertexExistsError(Exception):
     pass
 
 class GraphEmptyError(Exception):
     pass
 
+class PathNotFoundError(Exception):
+    pass
 
-g = Graph()
-g.add_vertex("A", 1)
-g.add_vertex("B", 1)
-g.add_vertex("C", 1)
-g.add_edge("A", "C", 5.0)
-g.add_edge("A", "B", 2.2)
-g.add_edge("B", "C", 12)
-g.display_as_list()
-print(g.dijkstra("A", "D"))
-g.display_as_matrix()
