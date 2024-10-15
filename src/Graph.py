@@ -1,7 +1,9 @@
+from operator import index
 
 from Queue import Queue
 from Stack import Stack
 from LinkedList import LinkedList
+from Heap import *
 
 
 class GraphVertex:
@@ -35,8 +37,6 @@ class GraphVertex:
 
         if not inserted:
             self.links.insert_last((vertex, weight))  # If not inserted, add to the end
-
-
 
     def remove_adjacent(self, vertex: "GraphVertex"):
         for i in range(len(self.links)):
@@ -260,11 +260,48 @@ class Graph:
                     t.enqueue(w)
             print(v)
 
-    def find_shortest_path(self):
-        """
-        Performs a search of the graph using Djikstra's Algorithm and returns the shortest path.
-        :return:
-        """
+
+    def dijkstra(self, start_label: str, end_label: str):
+        if self.count == 0:
+            raise GraphEmptyError("Cannot perform dijkstra's algorithm on empty graph.")
+        if not self.has_vertex(start_label) or not self.has_vertex(end_label):
+            raise VertexNotFoundError("Cannot find one or both vertices to perform dijkstra's algorithm")
+
+        start = self._find_vertex(start_label)
+        end = self._find_vertex(end_label)
+
+        #convert the linked list of vertices to a python list/arr to use indexing
+        vertices_list = [node.get_value() for node in self.vertices]
+
+        pq = Heap(self.count)
+
+        prev = [None] * self.count
+        distances = [float("inf")] * self.count
+        distances[vertices_list.index(start)] = 0
+
+        pq.add(0, start)
+
+        found = False
+
+        while pq.get_count() > 0:
+            vertex = pq.remove().get_value()
+
+            for neighbour, weight in vertex.get_adjacent():
+                if neighbour == end:
+                    found = True
+                alt = distances[vertices_list.index(vertex)] + weight
+
+                if alt < distances[vertices_list.index(neighbour)]:
+                    prev[vertices_list.index(neighbour)] = vertex
+                    distances[vertices_list.index(neighbour)] = alt
+                    pq.add(alt, neighbour)
+            if found:
+                return distances[1:], prev[1:]
+
+        print("Path not found")
+
+
+
 
 
 
@@ -324,7 +361,9 @@ g = Graph()
 g.add_vertex("A", 1)
 g.add_vertex("B", 1)
 g.add_vertex("C", 1)
-g.add_edge("A", "B", 5.2)
-g.add_edge("B", "C", 505123)
+g.add_edge("A", "C", 5.0)
+g.add_edge("A", "B", 2.2)
+g.add_edge("B", "C", 12)
 g.display_as_list()
+print(g.dijkstra("A", "D"))
 g.display_as_matrix()

@@ -46,7 +46,7 @@ class Heap:
     # iterative
     def trickle_up(self, current_index):
         parent_index = (current_index-1) // 2
-        while current_index > 0 and self.heap[current_index].get_priority() > self.heap[parent_index].get_priority():
+        while current_index > 0 and self.heap[current_index].get_priority() < self.heap[parent_index].get_priority():
             self.heap[parent_index], self.heap[current_index] = self.heap[current_index], self.heap[parent_index]
             current_index = parent_index
             parent_index = (current_index - 1) // 2
@@ -74,11 +74,10 @@ class Heap:
             large_index = left_child_index
 
             if right_child_index < num_items:
-
-                if self.heap[left_child_index].get_priority() < self.heap[right_child_index].get_priority():
+                if self.heap[left_child_index].get_priority() > self.heap[right_child_index].get_priority():
                     large_index = right_child_index
 
-            if self.heap[large_index].get_priority() > self.heap[current_index].get_priority():
+            if self.heap[large_index].get_priority() < self.heap[current_index].get_priority():
                 self.heap[large_index], self.heap[current_index] = self.heap[current_index], self.heap[large_index]
                 self.trickle_down(large_index, num_items)
 
@@ -97,6 +96,9 @@ class Heap:
         for i in range(self.count-1, 0, -1):
             self.heap[0], self.heap[i] = self.heap[i], self.heap[0]
             self.trickle_down(0, i)
+
+    def get_count(self):
+        return self.count
 
 
 class HeapFullException(Exception):
