@@ -21,26 +21,28 @@ class GraphVertex:
         return self.value
 
     def get_adjacent(self):
-        adjacent_vertices = [vertex.get_value() for vertex in self.links]
+        adjacent_vertices = [(node.get_value()[0], node.get_value()[1]) for node in self.links]
         return adjacent_vertices
 
-    def set_adjacent(self, vertex: "GraphVertex"):
+    def set_adjacent(self, vertex: "GraphVertex", weight: float):
         inserted = False
         for i in range(len(self.links)):
-            if vertex.get_label() < self.links[i].get_value().get_label():
-                self.links.insert_before(vertex, i)
+            current_vertex, current_weight = self.links[i].get_value()
+            if vertex.get_label() < current_vertex.get_label():
+                self.links.insert_before((vertex, weight), i)
                 inserted = True
                 break
 
         if not inserted:
-            self.links.insert_last(vertex)  # If not inserted, add to the end
+            self.links.insert_last((vertex, weight))  # If not inserted, add to the end
 
 
 
     def remove_adjacent(self, vertex: "GraphVertex"):
         for i in range(len(self.links)):
-            if self.links[i].get_value() is vertex:
+            if self.links[i].get_value()[0] == vertex:
                 self.links.remove_at(i)
+                break
 
     def set_visited(self):
         self.visited = True
@@ -104,11 +106,12 @@ class Graph:
         self.count -= 1
 
 
-    def add_edge(self, label1, label2) -> None:
+    def add_edge(self, label1, label2, weight: float) -> None:
         """
         Adds an edge between two vertices.
         :param label1: label of the first vertex
         :param label2: label of the second vertex
+        :param weight: weight of the edge
         """
         if self.is_adjacent(label1, label2):
             raise EdgeExistsError("Edge exists. Cannot add multiple edges in a simple graph.")
@@ -117,8 +120,8 @@ class Graph:
         vertex2 = self._find_vertex(label2)
         if vertex1 and vertex2:
             if vertex1 != vertex2:
-                vertex1.set_adjacent(vertex2)
-                vertex2.set_adjacent(vertex1)
+                vertex1.set_adjacent(vertex2, weight)
+                vertex2.set_adjacent(vertex1, weight)
             else:
                 raise EdgeToSameVertex("Cannot add edge from vertex to itself.")
 
@@ -174,8 +177,10 @@ class Graph:
         vertex1 = self._find_vertex(label1)
         vertex2 = self._find_vertex(label2)
         if vertex1 and vertex2:
-            return vertex2 in vertex1.get_adjacent()
-        raise VertexNotFoundError("Vertex not found.")
+            for vertex, _ in vertex1.get_adjacent():
+                if vertex2 == vertex:
+                    return True
+        return False
 
     def display_as_list(self) -> None:
         """
@@ -184,9 +189,8 @@ class Graph:
         for vertex in self.vertices:
             print(f"{vertex.get_value()} {'->' if vertex.get_value().get_adjacent() else ''} ", end="")
             if vertex.get_value().get_adjacent():
-                for count, adjacent_vertex in enumerate(vertex.get_value().get_adjacent()):
-                    print(f"{adjacent_vertex} {'->' if count + 1 < len(vertex.get_value().get_adjacent()) else ''} ",
-                          end="")
+                for count, (adjacent_vertex, weight) in enumerate(vertex.get_value().get_adjacent()):
+                    print(f"{adjacent_vertex} {'->' if count + 1 < len(vertex.get_value().get_adjacent()) else ''} ", end="")
             print()
 
     def display_as_matrix(self):
@@ -248,13 +252,21 @@ class Graph:
         while not q.is_empty():
             v = q.dequeue()
 
-            for w in v.get_adjacent():
+            for w, _ in v.get_adjacent():
                 if not w.get_visited():  # Only consider unvisited adjacent vertices
                     w.set_visited()  # Mark as visited before enqueueing
                     q.enqueue(w) 
                     t.enqueue(v)
                     t.enqueue(w)
             print(v)
+
+    def find_shortest_path(self):
+        """
+        Performs a search of the graph using Djikstra's Algorithm and returns the shortest path.
+        :return:
+        """
+
+
 
     def dfs(self):
         """
@@ -277,7 +289,7 @@ class Graph:
             # Flag to track if we have an unvisited neighbor
             found_unvisited = False
 
-            for neighbour in w:
+            for neighbour, _ in w:
                 if not neighbour.get_visited():  # If the neighbor is not visited
                     neighbour.set_visited()  # Mark it as visited
                     s.push(neighbour)  # Push the neighbor onto the stack
@@ -306,3 +318,13 @@ class VertexExistsError(Exception):
 
 class GraphEmptyError(Exception):
     pass
+
+
+g = Graph()
+g.add_vertex("A", 1)
+g.add_vertex("B", 1)
+g.add_vertex("C", 1)
+g.add_edge("A", "B", 5.2)
+g.add_edge("B", "C", 505123)
+g.display_as_list()
+g.display_as_matrix()
