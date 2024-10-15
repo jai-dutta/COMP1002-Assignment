@@ -2,7 +2,7 @@ from operator import index
 from Queue import Queue
 from Stack import Stack
 from LinkedList import LinkedList
-from PriorityQueue import *
+from MinHeap import *
 
 
 class GraphVertex:
@@ -254,7 +254,7 @@ class Graph:
         # convert the linked list of vertices to a python list/arr to use indexing
         vertices_list = [node.get_value() for node in self.vertices]
 
-        pq = PriorityQueue(self.count)
+        pq = MinHeap(self.count)
 
         prev = [None] * self.count
         distances = [float("inf")] * self.count

@@ -6,7 +6,9 @@ class Vehicle:
         self.destination = None
         self.distance_to_destination = 0
         self.battery_level = 100
-    
+
+    def __str__(self):
+        return f"ID: {self.ID}"
     def get_location(self):
         return self.location
     

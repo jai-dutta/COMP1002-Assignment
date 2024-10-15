@@ -1,12 +1,127 @@
-from MinHeap import MinHeap
+import time
+from random import randint
+
+from MinHeap import *
+import numpy as np
 from Vehicle import Vehicle
 
-vehicles = [Vehicle("123"), Vehicle("456"), Vehicle("789")]
-vehicles[0].set_distance_to_destination(10)
-vehicles[1].set_distance_to_destination(5)
-vehicles[2].set_distance_to_destination(20)
+class VehicleEntry:
+    def __init__(self, priority: float, vehicle: Vehicle):
+        self.priority = priority
+        self.vehicle = vehicle
 
-h = MinHeap(len(vehicles))
-sorted_vehicles = h.heapsort_vehicles(vehicles)
-for i in sorted_vehicles:
-    print(i.get_distance_to_destination())
+    def __str__(self):
+        return f"Priority: {self.priority} | Vehicle ID: {self.vehicle}"
+
+    def get_priority(self):
+        return self.priority
+
+    def set_priority(self, priority):
+        self.priority = priority
+
+    def get_vehicle(self):
+        return self.vehicle
+
+    def set_vehicle(self, vehicle):
+        self.vehicle = vehicle
+
+
+class VehicleSortHeap(MinHeap):
+    def __init__(self, size):
+        super().__init__(size)
+
+    def add(self, priority: int, value: object):
+        if self.size == self.count:
+            raise HeapFullException()
+
+        new_entry = VehicleEntry(priority, value)
+        self.heap[self.count] = new_entry
+        self.trickle_up(self.count)
+        self.count += 1
+
+    def heapsort_vehicles(self, vehicles):
+        # Clear the existing heap
+        self.count = 0
+        self.heap = np.empty(len(vehicles), dtype=object)
+
+        # Add all vehicles to the heap
+        for v in vehicles:
+            self.add(v.get_distance_to_destination(), v)
+
+        # Extract vehicles in sorted order (smallest to largest)
+        sorted_vehicles = np.empty(len(vehicles), dtype=object)
+
+        # Loop from the end of the array towards the start
+        for i in range(len(vehicles)):
+            sorted_vehicles[i] = self.remove().get_vehicle()
+
+        return sorted_vehicles
+
+    def find_nearest_vehicle(self):
+        if self.count == 0:
+            raise HeapEmptyException("Heap empty")
+        return self.heap[0]
+
+
+def quick_sort(arr):
+    quick_sort_recurse(arr, 0, len(arr) - 1)
+    return arr
+
+def quick_sort_recurse(arr, left_index, right_index):
+    if right_index > left_index:
+        pivot_index = (left_index + right_index) // 2
+        new_pivot_index = do_partitioning(arr, left_index, right_index, pivot_index)
+
+        quick_sort_recurse(arr, left_index, new_pivot_index - 1)
+        quick_sort_recurse(arr, new_pivot_index + 1, right_index)
+
+def do_partitioning(arr, left_index, right_index, pivot_index):
+    pivot_val = arr[pivot_index]
+    arr[pivot_index], arr[right_index] = arr[right_index], arr[pivot_index]
+
+    store_index = left_index
+    for i in range(left_index, right_index):
+        if arr[i].get_battery_level() > pivot_val.get_battery_level():
+            if i != store_index:
+                arr[i], arr[store_index] = arr[store_index], arr[i]
+            store_index += 1
+
+    arr[right_index], arr[store_index] = arr[store_index], arr[right_index]
+    return store_index
+
+
+
+
+
+
+
+
+vehicles = []
+for i in range(15):
+    vehicle = Vehicle(i)
+    vehicles.append(vehicle)
+    vehicles[i].set_battery_level(randint(0,100))
+    vehicles[i].set_distance_to_destination(randint(0,100))
+
+s = time.time()
+sorted_v = quick_sort(vehicles)
+e = time.time()
+for i in sorted_v:
+    pass
+    #print(i.get_battery_level())
+
+print("Time: ", e - s,"s")
+
+s1 = time.time()
+h = VehicleSortHeap(len(vehicles))
+#sorted_v = h.heapsort_vehicles(vehicles)
+e1 = time.time()
+#for i in sorted_v:
+#    print(i, i.get_distance_to_destination())
+for v in vehicles:
+    h.add(v.get_distance_to_destination(), v)
+cv = h.find_nearest_vehicle()
+print(cv.get_vehicle().get_distance_to_destination(), cv)
+
+print("Quick Sort: Time: ", e - s,"s")
+print("Heap Sort: Time: ", e1 - s1,"s")
