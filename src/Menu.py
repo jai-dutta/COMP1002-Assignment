@@ -2,6 +2,7 @@ import os
 from Graph import VertexExistsError, EdgeExistsError, VertexNotFoundError, EdgeToSameVertex
 from Sorting import *
 from VehicleHashTable import *
+from Vehicle import *
 
 red = "\033[0;31m"
 green = "\033[0;32m"
@@ -21,6 +22,7 @@ menu_options = {
     10: "Exit"
 }
 
+
 def print_menu(menu_options: dict):
     print("-" * 50)
     print(f"{red}{bold}Welcome to the Autonomous Vehicle Management System{end}")
@@ -28,6 +30,7 @@ def print_menu(menu_options: dict):
     for key, value in menu_options.items():
         print(f"\t{key}. {value}")
     print("-" * 50)
+
 
 def get_choice(menu_options: dict):
     while True:
@@ -40,22 +43,30 @@ def get_choice(menu_options: dict):
         except ValueError:
             print(f"{red}{bold}Invalid input. Please enter a number.{end}")
 
+
 def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
+
 
 def main_menu(graph, vehicle_hash_table):
     running = True
 
     while running:
+        vehicles = vehicle_hash_table.export_to_array()
+
         clear_screen()
 
         print_menu(menu_options)
+
         print("Map: ")
+        print()
         display_graph(graph)
         print("-" * 50)
+
         print("\nVehicles: ")
         print("-" * 50)
-        _print_vehicle_from_arr(vehicle_hash_table.export_to_array(), False)
+        _print_vehicle_from_arr(vehicles, False)
+        print()
         choice = get_choice(menu_options)
         match choice:
             case 1:
@@ -70,9 +81,17 @@ def main_menu(graph, vehicle_hash_table):
             case 4:
                 display_vehicles(vehicle_hash_table)
             case 5:
-                pass
+                sorted_vehicles = sort_by_distance(vehicles)
+                vehicle = sorted_vehicles[0]
+                if len(vehicles) > 0:
+                    print(f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
+                    input("Press Enter to continue...")
             case 6:
-                pass
+                sorted_vehicles = sort_by_battery(vehicles)
+                vehicle = sorted_vehicles[0]
+                if len(vehicles) > 0:
+                    print(f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
+                    input("Press Enter to continue...")
             case 7:
                 add_location(graph)
             case 8:
@@ -82,6 +101,25 @@ def main_menu(graph, vehicle_hash_table):
             case 10:
                 print("Thank you for using the Autonomous Vehicle Management System. Goodbye!")
                 running = False
+
+
+def sort_by_battery(vehicles):
+    if len(vehicles) > 0:
+        sorted_vehicles = quick_sort(vehicles)
+        return sorted_vehicles
+    else:
+        print(f"{red}{bold}No vehicles in the system.{end}")
+        input("Press Enter to continue...")
+
+def sort_by_distance(vehicles):
+    if len(vehicles) > 0:
+        sort_heap = VehicleSortHeap(len(vehicles))
+        sorted_vehicles = sort_heap.heapsort_vehicles(vehicles)
+        return sorted_vehicles
+    else:
+        print(f"{red}{bold}No vehicles in the system.{end}")
+        input("Press Enter to continue...")
+
 
 def check_path(graph):
     try:
@@ -95,6 +133,7 @@ def check_path(graph):
     except VertexNotFoundError as e:
         print(f"{red}{bold}Error: {e}{end}")
     input("Press Enter to continue...")
+
 
 def display_graph(graph):
     graph.display_as_list()
@@ -124,12 +163,14 @@ def add_location(graph):
 
     input("Press Enter to continue...")
 
+
 def _print_vehicle_from_arr(vehicle_arr, full_info: bool):
     for vehicle in vehicle_arr:
         if full_info:
             print(f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
         else:
             print(f"{vehicle}")
+
 
 def display_vehicles(vehicle_hash_table):
     vehicles = vehicle_hash_table.export_to_array()
@@ -144,14 +185,16 @@ def display_vehicles(vehicle_hash_table):
         return
 
     if choice == 1:
-        sorted_vehicles = quick_sort(vehicles)
-        _print_vehicle_from_arr(sorted_vehicles, True)
+        sorted_vehicles = sort_by_battery(vehicles)
+        if len(vehicles) > 0:
+            _print_vehicle_from_arr(sorted_vehicles, True)
+            input("Press Enter to continue...")
 
     elif choice == 2:
-        sort_heap = VehicleSortHeap(len(vehicles))
-        sorted_vehicles = sort_heap.heapsort_vehicles(vehicles)
-        _print_vehicle_from_arr(sorted_vehicles, True)
-        input("Press Enter to continue...")
+        sorted_vehicles = sort_by_distance(vehicles)
+        if len(vehicles) > 0:
+            _print_vehicle_from_arr(sorted_vehicles, True)
+            input("Press Enter to continue...")
 
     else:
         print(f"{red}{bold}Please enter a valid input.{end}")
@@ -183,8 +226,8 @@ def update_vehicle(graph, vehicle_hash_table):
 
         distance_to_dest = graph.is_path(location_id, destination_id)
         if distance_to_dest:
-            print(f"{green}{bold}Path from {location_id} to {destination_id} found with a distance of {distance_to_dest}{end}")
-            print(graph.dijkstra(location_id, destination_id))
+            print(
+                f"{green}{bold}Path from {location_id} to {destination_id} found with a distance of {distance_to_dest}{end}")
             vehicle.set_destination(destination_id)
             vehicle.set_distance_to_destination(distance_to_dest)
         else:
@@ -216,10 +259,22 @@ def remove_vehicle(vehicle_hash_table):
 
     input("Press Enter to continue...")
 
-
 def add_vehicle(vehicle_hash_table):
     vehicle_id = input("Enter vehicle ID: ")
-    vehicle = Vehicle(vehicle_id)
+    try:
+        battery_level = int(input("Enter battery level percentage: "))
+    except ValueError:
+        print(f"{red}{bold}Please enter a valid input.{end}")
+        input("Press Enter to continue...")
+        return
+
+    try:
+        vehicle = Vehicle(vehicle_id, battery_level)
+
+    except InvalidBatteryException as e:
+        print(f"{red}{bold}{e}{end}")
+        input("Press Enter to continue...")
+        return
 
     try:
         vehicle_hash_table.put(vehicle_id, vehicle)

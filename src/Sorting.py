@@ -92,15 +92,3 @@ def do_partitioning(arr, left_index, right_index, pivot_index):
 def find_highest_battery_level(vehicles):
     quick_sort(vehicles)
     return vehicles[0]
-
-
-
-
-
-
-vehicles = []
-for i in range(15):
-    vehicle = Vehicle(i)
-    vehicles.append(vehicle)
-    vehicles[i].set_battery_level(randint(0,100))
-    vehicles[i].set_distance_to_destination(randint(0,100))

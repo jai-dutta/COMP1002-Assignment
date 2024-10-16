@@ -122,7 +122,8 @@ class Graph:
                 vertex2.set_adjacent(vertex1, weight)
             else:
                 raise EdgeToSameVertex("Cannot add edge from vertex to itself.")
-        raise VertexNotFoundError("Cannot find one or both of vertices to add edge.")
+        else:
+            raise VertexNotFoundError("Cannot find one or both of vertices to add edge.")
 
     def delete_edge(self, label1, label2) -> None:
         """
