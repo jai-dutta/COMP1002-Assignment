@@ -13,7 +13,7 @@ class GraphVertex:
         self.links = LinkedList()
 
     def __str__(self):
-        return f"{self.label}: {self.value}"
+        return f"{self.label}: {self.value}" if self.value else f"{self.label}"
 
     def get_label(self):
         return self.label
@@ -67,7 +67,7 @@ class Graph:
         self.vertices = LinkedList()
         self.count = 0
 
-    def add_vertex(self, label, value) -> None:
+    def add_vertex(self, label, value=0) -> None:
         """
         Adds a vertex to the graph. Maintains sorted order.
         :param label: Label of the vertex

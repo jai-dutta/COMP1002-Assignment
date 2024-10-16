@@ -1,5 +1,5 @@
 import os
-from Graph import Graph
+from Graph import Graph, VertexExistsError, EdgeExistsError
 from Vehicle import Vehicle
 from MinHeap import MinHeap
 from Sorting import *
@@ -14,14 +14,14 @@ menu_options = {
     1: "Add a new vehicle",
     2: "Remove a vehicle",
     3: "Update a vehicle",
-    3: "Display all vehicles",
-    4: "Find nearest vehicle",
-    5: "Find highest battery level",
-    6: "Add a location",
-    7: "Add a road",
-    8: "Display map",
-    9: "Check path existance",
-    10: "Exit"
+    4: "Display all vehicles",
+    5: "Find nearest vehicle",
+    6: "Find highest battery level",
+    7: "Add a location",
+    8: "Add a road",
+    9: "Display map",
+    10: "Check path existance",
+    11: "Exit"
 }
 
 def print_menu(menu_options: dict):
@@ -50,6 +50,7 @@ def main():
     vehicle_hash_table = VehicleHashTable(10)
     graph = Graph()
 
+
     running = True
 
     while running:
@@ -73,27 +74,61 @@ def main():
                     print(f"{red}{bold}Error: {e}{end}")
                 input("Press Enter to continue...")
             case 3:
-                print(vehicle_hash_table)
+                vehicle_id = input("Enter vehicle ID: ")
+
+                try:
+                    vehicle = vehicle_hash_table.get(vehicle_id)
+                    print(f"{green}{bold}Vehicle found successfully{end}")
+                except VehicleNotFoundError as e:
+                    print(f"{red}{bold}Error: {e}{end}")
+
+                location_id = input("Enter location ID: ")
+                if(graph.has_vertex(location_id)):
+                    print(f"{green}{bold}Location found{end}")
+                else:
+                    print(f"{red}{bold}Error: Location not found{end}")
+
+                destination_id = input("Enter destination ID: ")
+                if(graph.has_vertex(destination_id)):
+                    print(f"{green}{bold}Destination found{end}")
+                else:
+                    print(f"{red}{bold}Error: Destination not found{end}")
+
+                vehicle.set_destination(destination_id)
+                vehicle.set_location(location_id)
+                print(f"{green}{bold}Vehicle updated successfully{end}")
                 input("Press Enter to continue...")
             case 4:
-                pass
-                #find_nearest_vehicle()
+                print(vehicle_hash_table)
+                input("Press Enter to continue...")
             case 5:
-                pass
-                #find_highest_battery_level()
+                heap
             case 6:
                 pass
-                #add_location()
             case 7:
-                pass
-                #add_road()
+                try:
+                    location_id = input("Enter location ID: ")
+                    graph.add_vertex(location_id)
+                    print(f"{green}{bold}Location added successfully{end}")
+                except VertexExistsError as e:
+                    print(f"{red}{bold}Error: {e}{end}")
+                input("Press Enter to continue...")
             case 8:
-                pass
-                #display_map()
+                try:
+                    vertex1_id = input("Enter first location ID: ")
+                    vertex2_id = input("Enter second location ID: ")
+                    weight = int(input("Enter length of the road: "))
+                    graph.add_edge(vertex1_id, vertex2_id, weight)
+                    print(f"{green}{bold}Road added successfully{end}")
+                except EdgeExistsError or ValueError as e:
+                    print(f"{red}{bold}Error: {e}{end}")
+                input("Press Enter to continue...")
             case 9:
-                pass
-                #check_path_existence()
+                graph.display_as_list()
+                input("Press Enter to continue...")
             case 10:
+                pass
+            case 11:
                 print("Thank you for using the Autonomous Vehicle Management System. Goodbye!")
                 running = False
            
