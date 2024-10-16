@@ -46,10 +46,8 @@ class VehicleHashTable:
         give_up = False
 
         while not inserted and not give_up:
-            #update existing entries
             if self.hash_array[hash_index].get_key() == key:
-                self.hash_array[hash_index].value = value
-                inserted = True
+                raise DuplicateVehicleFound(f"Could not insert vehicle ID: [{key}]. Duplicate ID found.")
             elif self.hash_array[hash_index].get_state() == 0:
                 self.hash_array[hash_index] = HashEntry(key, value)
                 self.count += 1
@@ -73,7 +71,7 @@ class VehicleHashTable:
         if hash_index:
             return self.hash_array[hash_index].get_value()
         else:
-            raise VehicleNotFoundError(f"Key {key} was not found.")
+            raise VehicleNotFoundError(f"ID [{key}] was not found.")
 
     def remove(self, key):
         self.size_down_check()
@@ -83,7 +81,7 @@ class VehicleHashTable:
             self.hash_array[hash_index].set_as_removed()
             self.count -= 1
         else:
-            raise VehicleNotFoundError(f"Key {key} was not found for deletion.")
+            raise VehicleNotFoundError(f"ID [{key}] was not found for deletion.")
 
     def get_lf(self):
         lf = self.count / self.hash_array.size
@@ -114,16 +112,25 @@ class VehicleHashTable:
                     give_up = True
 
         if not found:
-            raise VehicleNotFoundError(f"Key {key} was not found.")
+            raise VehicleNotFoundError(f"ID [{key}] was not found.")
 
         return hash_index
 
-    def export_hash_table_to_file(self, filename):
+    def export_to_file(self, filename):
         with open(filename, "w") as file:
             for entry in self.hash_array:
                 if entry.get_state() == 1:
                     s = str(entry.get_key()) + "," + str(entry.get_value()) + "\n"
                     file.write(s)
+
+    def export_to_array(self):
+        arr = np.empty(self.count, dtype=object)
+        count = 0
+        for vehicle in self.hash_array:
+            if vehicle.get_state() == 1:
+                arr[count] = vehicle.get_value()
+                count += 1
+        return arr
 
     def import_hash_table(self, filename):
         with open(filename, "r") as file:
@@ -136,14 +143,12 @@ class VehicleHashTable:
     def size_down_check(self):
         if self.get_lf() < 0.2 and 100 < self.count:
             new_size = self._find_next_prime(self.hash_array.size // 2)
-            print(f"Resizing from {self.hash_array.size} to {new_size}")
             self.count = 0
             self._resize(new_size)
 
     def size_up_check(self):
         if 0.75 < self.get_lf():
             new_size = self._find_next_prime(self.hash_array.size * 2)
-            print(f"Resizing from {self.hash_array.size} to {new_size}")
             self.count = 0
             self._resize(new_size)
 
@@ -194,4 +199,7 @@ class VehicleHashTable:
         return prime_val
 
 class VehicleNotFoundError(Exception):
+    pass
+
+class DuplicateVehicleFound(Exception):
     pass

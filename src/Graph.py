@@ -122,6 +122,7 @@ class Graph:
                 vertex2.set_adjacent(vertex1, weight)
             else:
                 raise EdgeToSameVertex("Cannot add edge from vertex to itself.")
+        raise VertexNotFoundError("Cannot find one or both of vertices to add edge.")
 
     def delete_edge(self, label1, label2) -> None:
         """
@@ -184,10 +185,10 @@ class Graph:
         Displays the graph as an adjacency list.
         """
         for vertex in self.vertices:
-            print(f"{vertex.get_value()} {'->' if vertex.get_value().get_adjacent() else ''} ", end="")
+            print(f"{vertex.get_value()} ", end="")
             if vertex.get_value().get_adjacent():
                 for count, (adjacent_vertex, weight) in enumerate(vertex.get_value().get_adjacent()):
-                    print(f"{adjacent_vertex} {'->' if count + 1 < len(vertex.get_value().get_adjacent()) else ''} ",
+                    print(f"{f'- {weight} > {adjacent_vertex} ' if count + 1 < len(vertex.get_value().get_adjacent()) else f'- {weight} > {adjacent_vertex} '} ",
                           end="")
             print()
 
@@ -262,26 +263,29 @@ class Graph:
 
         pq.add(0, start)
 
-        found = False
+        while pq.get_count() > 0:
+            current_entry = pq.remove()
+            current_distance = current_entry.get_priority()
+            vertex = current_entry.get_value()
 
-        while pq.get_count() > 0 and not found:
-            vertex = pq.remove().get_value()
+            if vertex == end:
+                break
+
+            if current_distance > distances[vertices_list.index(vertex)]:
+                continue
 
             for neighbour, weight in vertex.get_adjacent():
-                if neighbour == end:
-                    found = True
-                alt = distances[vertices_list.index(vertex)] + weight
+                alt = current_distance + weight
 
                 if alt < distances[vertices_list.index(neighbour)]:
                     prev[vertices_list.index(neighbour)] = vertex
                     distances[vertices_list.index(neighbour)] = alt
                     pq.add(alt, neighbour)
 
-        if found:
-            final_distance = distances[vertices_list.index(end)]
-            return final_distance, self._reconstruct_path(prev, start, end, vertices_list)
-        else:
-            raise PathNotFoundError("Path not found between provided vertices.")
+        final_distance = distances[vertices_list.index(end)]
+        if final_distance == float("inf"):
+            raise PathNotFound("Path not found between provided vertices.")
+        return final_distance, self._reconstruct_path(prev, start, end, vertices_list)
 
     def _reconstruct_path(self, prev, start, end, vertices_list):
         """
@@ -296,7 +300,7 @@ class Graph:
         path.reverse()
         return path
 
-    def is_path(self, start_label, end_label) -> bool:
+    def is_path(self, start_label, end_label) -> int | bool:
         """
         Checks if there is a path between two vertices using dijkstra's algorithm.
 
@@ -305,14 +309,18 @@ class Graph:
 
         :param start_label: label of the start vertex
         :param end_label: label of the end vertex
-        :return: True if there is a path, False otherwise
+        :return: Integer (length of path) if there is a path, False otherwise
         """
         if not self.has_vertex(start_label) or not self.has_vertex(end_label):
             raise VertexNotFoundError("Cannot find one or both vertices to check for path.")
         start = self._find_vertex(start_label)
         end = self._find_vertex(end_label)
 
-        return self.dijkstra(start_label, end_label)[0] is not None
+        try:
+            distance, _ = self.dijkstra(start_label, end_label)
+            return distance
+        except PathNotFound:
+            return False
 
 
 class VertexNotFoundError(Exception):
@@ -332,6 +340,6 @@ class VertexExistsError(Exception):
 class GraphEmptyError(Exception):
     pass
 
-class PathNotFoundError(Exception):
+class PathNotFound(Exception):
     pass
 
