@@ -111,7 +111,7 @@ def main_menu(graph, vehicle_hash_table):
 
     # Main menu loop
     while running:
-        # Export vehciles from hash table to array each time the loop runs (for printing and sorting)
+        # Export vehicles from hash table to array each time the loop runs (for printing and sorting)
         vehicles = vehicle_hash_table.export_to_array()
 
         clear_screen()

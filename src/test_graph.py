@@ -7,7 +7,7 @@ This file contains the tests for the Graph class.
 """
 import pytest
 
-from Graph import Graph, VertexNotFound, EdgeToSameVertex, EdgeExistsError, VertexExistsError
+from Graph import Graph, VertexNotFoundError, EdgeToSameVertex, EdgeExistsError, VertexExistsError
 
 
 @pytest.fixture
@@ -45,7 +45,7 @@ def test_delete_vertex(sample_graph):
 
 
 def test_delete_nonexistent_vertex(sample_graph):
-    with pytest.raises(VertexNotFound):
+    with pytest.raises(VertexNotFoundError):
         sample_graph.delete_vertex('D')
 
 
@@ -75,7 +75,7 @@ def test_delete_nonexistent_edge(sample_graph):
 
 
 def test_get_adjacent_nonexistent_vertex(sample_graph):
-    with pytest.raises(VertexNotFound):
+    with pytest.raises(VertexNotFoundError):
         sample_graph.get_adjacent('D')
 
 

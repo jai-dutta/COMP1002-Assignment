@@ -1,45 +1,97 @@
 """
 LinkedList.py
+
+This file contains the LinkedList class, which is used to represent a linked list.
+
 DSA [COMP1002] Assignment
 Author: Jai Dutta
 Student ID: 22073372
-This file contains the LinkedList class, which is used to represent a linked list.
 """
 
 
+
 class ListNode:
-    def __init__(self, value):
+    """
+    A class to represent a node in the linked list.
+    Attributes:
+        value: The value of the node.
+        next: The next node in the linked list.
+        prev: The previous node in the linked list.
+    """
+
+    def __init__(self, value: any):
+        """
+        Initialize a ListNode object.
+        Args:
+            value: The value of the node.
+        """
         self.value = value
         self.next = None
         self.prev = None
 
-    def get_value(self):
+    def get_value(self) -> any:
+        """
+        Return the value of the node.
+        Returns:
+            The value of the node.
+        """
         return self.value
 
-    def set_value(self, value):
+    def set_value(self, value: any):
+        """
+        Set the value of the node.
+        Args:
+            value: The value of the node.
+        """
         self.value = value
 
-    def get_next(self):
+    def get_next(self) -> "ListNode":
+        """
+        Return the next node in the linked list.
+        Returns:
+            The next node in the linked list.
+        """
         return self.next
 
-    def get_prev(self):
+    def get_prev(self) -> "ListNode":
+        """
+        Return the previous node in the linked list.
+        Returns:
+            The previous node in the linked list.
+        """
         return self.prev
 
     def set_next(self, next_node: "ListNode"):
+        """
+        Set the next node in the linked list.
+        Args:
+            next_node: The next node in the linked list.
+        """
         self.next = next_node
 
     def set_prev(self, prev_node: "ListNode"):
+        """
+        Set the previous node in the linked list.
+        Args:
+            prev_node: The previous node in the linked list.
+        """
         self.prev = prev_node
 
 
 class LinkedListIterator:
-    def __init__(self, head):
+    """
+    An iterator for the linked list.
+    Attributes:
+        current: The current node in the linked list.
+    """
+
+    def __init__(self, head: ListNode):
         self.current = head
 
     def __iter__(self):
         return self
 
-    def __next__(self):
+    def __next__(self) -> ListNode:
         if not self.current:
             raise StopIteration
         else:
@@ -49,18 +101,41 @@ class LinkedListIterator:
 
 
 class LinkedList:
+    """
+    A class to represent a linked list.
+    Attributes:
+        head: The head node of the linked list.
+        tail: The tail node of the linked list.
+        count: The number of nodes in the linked list.
+    """
+
     def __init__(self):
+        """
+        Initialize a LinkedList object.
+        """
         self.head = None
         self.tail = None
         self.count = 0
 
     def __iter__(self):
+        """
+        Return an iterator for the linked list.
+        Returns:
+            An iterator for the linked list.
+        """
         return LinkedListIterator(self.head)
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: int) -> ListNode:
+        """
+        Allows for index access in the linked list.
+        Args:
+            item: The index of the node to return.
+        Returns:
+            The node at the given index.
+        """
         if item < 0:
             raise IndexError("Index must be non-negative")
-
+    
         current = self.head
         current_item = 0
 
@@ -73,10 +148,18 @@ class LinkedList:
 
         raise IndexError("Index out of bounds!")
 
-    def __len__(self):
+    def __len__(self) -> int:
+        """
+        Return the number of nodes in the linked list.
+        Returns:
+            The number of nodes in the linked list.
+        """
         return self.count
 
     def print_list(self):
+        """
+        Print the linked list.
+        """
         counter = 1
         if self.is_empty():
             print("List is empty.")
@@ -91,7 +174,12 @@ class LinkedList:
             current_node = current_node.get_next()
         print()
 
-    def insert_first(self, value):
+    def insert_first(self, value: any):
+        """
+        Insert a new node at the beginning of the linked list
+        Args:
+            value: The value of the new node.
+        """
         new_node = ListNode(value)
 
         # if empty, then initialise this new node as the head.
@@ -105,7 +193,13 @@ class LinkedList:
             self.head = new_node
         self.count += 1
 
-    def insert_before(self, value, find_index):
+    def insert_before(self, value: any, find_index: int):
+        """
+        Insert a new node before the node at the given index.
+        Args:
+            value: The value of the new node.
+            find_index: The index of the node to insert the new node before.
+        """
         new_node = ListNode(value)
         if self.is_empty():
             print("List is empty.")
@@ -134,37 +228,13 @@ class LinkedList:
                     cn.set_prev(new_node)
             self.count += 1
 
-    def insert_at(self, value, find_index):
-        new_node = ListNode(value)
-        inserted = False
 
-        if self.is_empty():
-            self.insert_first(value)
-            return
-
-        else:
-            cn = self.head
-            search_index = 0
-            while search_index != find_index:
-                cn = cn.get_next()
-                search_index += 1
-            if search_index == find_index:
-                if cn.get_next():
-                    new_node.set_next(cn.get_next())
-                    if cn.get_next():
-                        cn.get_next().set_prev(new_node)
-                    new_node.set_prev(cn)
-                    cn.set_next(new_node)
-                    inserted = True
-                    self.count += 1
-                else:
-                    self.insert_last(value)
-                    inserted = True
-
-        if not inserted:
-            print("Failed to insert value.")
-
-    def insert_last(self, value):
+    def insert_last(self, value: any):
+        """
+        Insert a new node at the end of the linked list.
+        Args:
+            value: The value of the new node.
+        """
         new_node = ListNode(value)
 
         # if empty, then init the new node as the head
@@ -177,7 +247,12 @@ class LinkedList:
             self.tail = new_node
         self.count += 1
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
+        """
+        Check if the linked list is empty.
+        Returns:
+            True if the linked list is empty, False otherwise.
+        """
         return self.head is None
 
     def peek_first(self):
