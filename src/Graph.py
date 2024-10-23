@@ -1,9 +1,10 @@
-"""
-Graph.py
+"""Graph.py
+
+This file contains the Graph class, which represents a weighted, undirected graph.
+
 DSA [COMP1002] Assignment
 Author: Jai Dutta
 Student ID: 22073372
-This file contains the Graph class, which represents a weighted, undirected graph.
 """
 
 from LinkedList import LinkedList
@@ -12,26 +13,67 @@ from Queue import Queue
 
 
 class GraphVertex:
+    """A class to represent a vertex in the graph.
+
+    Attributes:
+        label: A string representing the label of the vertex.
+        value: The value associated with the vertex.
+        visited: A boolean indicating if the vertex has been visited.
+        links: A LinkedList of adjacent vertices and their edge weights.
+    """
+
     def __init__(self, label, value):
+        """Initialize a GraphVertex object.
+
+        Args:
+            label: A string representing the label of the vertex.
+            value: The value associated with the vertex.
+        """
         self.label = label
         self.value = value
         self.visited = False
         self.links = LinkedList()
 
     def __str__(self):
+        """Return a string representation of the vertex.
+
+        Returns:
+            A string representation of the vertex.
+        """
         return f"{self.label}: {self.value}" if self.value else f"{self.label}"
 
     def get_label(self):
+        """Get the label of the vertex.
+
+        Returns:
+            The label of the vertex.
+        """
         return self.label
 
     def get_value(self):
+        """Get the value of the vertex.
+
+        Returns:
+            The value of the vertex.
+        """
         return self.value
 
     def get_adjacent(self):
+        """Get the adjacent vertices and their edge weights.
+
+        Returns:
+            A list of tuples, each containing an adjacent vertex and its edge weight.
+        """
         adjacent_vertices = [(node.get_value()[0], node.get_value()[1]) for node in self.links]
         return adjacent_vertices
 
     def set_adjacent(self, vertex: "GraphVertex", weight: float):
+        """Set an adjacent vertex with its edge weight.
+
+        Args:
+            vertex: The adjacent GraphVertex object.
+            weight: The weight of the edge connecting to the adjacent vertex.
+        """
         inserted = False
         for i in range(len(self.links)):
             current_vertex, current_weight = self.links[i].get_value()
@@ -44,40 +86,55 @@ class GraphVertex:
             self.links.insert_last((vertex, weight))  # If not inserted, add to the end
 
     def remove_adjacent(self, vertex: "GraphVertex"):
+        """Remove an adjacent vertex.
+
+        Args:
+            vertex: The GraphVertex object to be removed from adjacency list.
+        """
         for i in range(len(self.links)):
             if self.links[i].get_value()[0] == vertex:
                 self.links.remove_at(i)
                 break
 
     def set_visited(self):
+        """Mark the vertex as visited."""
         self.visited = True
 
     def clear_visited(self):
+        """Clear the visited status of the vertex."""
         self.visited = False
 
     def get_visited(self):
+        """Get the visited status of the vertex.
+
+        Returns:
+            A boolean indicating whether the vertex has been visited.
+        """
         return self.visited
 
 
 class Graph:
-    """
-    A class to represent an undirected, weighted simple graph.
+    """A class to represent an undirected, weighted simple graph.
 
     Attributes:
-        vertices : A LinkedList, containing each vertex of the graph.
-        count : a count of vertices in the graph.
+        vertices: A LinkedList containing each vertex of the graph.
+        count: An integer count of vertices in the graph.
     """
 
     def __init__(self):
-        # Initialise linked list to contain vertices
+        """Initialize a Graph object."""
         self.vertices = LinkedList()
         self.count = 0
 
     def add_vertex(self, label, value=0) -> None:
-        """
-        Adds a vertex to the graph. Maintains sorted order.
-        :param label: Label of the vertex
-        :param value: Value of the vertex
+        """Add a vertex to the graph. Maintains sorted order.
+
+        Args:
+            label: Label of the vertex.
+            value: Value of the vertex. Defaults to 0.
+
+        Raises:
+            VertexExistsError: If a vertex with the given label already exists.
         """
         if self._find_vertex(label):
             raise VertexExistsError("Duplicate location found.")
@@ -100,9 +157,13 @@ class Graph:
         self.count += 1
 
     def delete_vertex(self, label) -> None:
-        """
-        Deletes a vertex from the graph.
-        :param label: label of the vertex to delete
+        """Delete a vertex from the graph.
+
+        Args:
+            label: Label of the vertex to delete.
+
+        Raises:
+            VertexNotFoundError: If the vertex to delete is not found.
         """
         index = self._find_vertex_index(label)
         if index is None:
@@ -111,11 +172,17 @@ class Graph:
         self.count -= 1
 
     def add_edge(self, label1, label2, weight: float) -> None:
-        """
-        Adds an edge between two vertices.
-        :param label1: label of the first vertex
-        :param label2: label of the second vertex
-        :param weight: weight of the edge
+        """Add an edge between two vertices.
+
+        Args:
+            label1: Label of the first vertex.
+            label2: Label of the second vertex.
+            weight: Weight of the edge.
+
+        Raises:
+            EdgeExistsError: If the edge already exists.
+            VertexNotFoundError: If one or both vertices are not found.
+            EdgeToSameVertex: If attempting to add an edge from a vertex to itself.
         """
         if self.is_adjacent(label1, label2):
             raise EdgeExistsError("Road exists. Cannot add multiple roads in a simple graph.")
@@ -132,10 +199,15 @@ class Graph:
             raise VertexNotFoundError("Cannot find one or both locations to add road.")
 
     def delete_edge(self, label1, label2) -> None:
-        """
-        Deletes an edge between two vertices.
-        :param label1: label of the first vertex
-        :param label2: label of the second vertex
+        """Delete an edge between two vertices.
+
+        Args:
+            label1: Label of the first vertex.
+            label2: Label of the second vertex.
+
+        Raises:
+            EdgeExistsError: If the edge to delete does not exist.
+            EdgeToSameVertex: If attempting to remove an edge from a vertex to itself.
         """
         if not self.is_adjacent(label1, label2):
             raise EdgeExistsError("Road to delete does not exist.")
@@ -150,22 +222,35 @@ class Graph:
                 raise EdgeToSameVertex("Cannot remove road from location to itself.")
 
     def has_vertex(self, label) -> bool:
-        """
-        Checks if a vertex exists.
-        :param label: Label of vertex to check.
+        """Check if a vertex exists.
+
+        Args:
+            label: Label of vertex to check.
+
+        Returns:
+            True if the vertex exists, False otherwise.
         """
         return True if self._find_vertex(label) else False
 
     def get_vertex_count(self) -> int:
-        """
-        Returns vertex count
+        """Get the vertex count.
+
+        Returns:
+            The number of vertices in the graph.
         """
         return self.count
 
     def get_adjacent(self, label) -> GraphVertex | None:
-        """
-        Returns adjacent vertices to specified vertex.
-        :param label: label for the vertex whose adjacent vertices are to be retrieved.
+        """Get adjacent vertices to specified vertex.
+
+        Args:
+            label: Label for the vertex whose adjacent vertices are to be retrieved.
+
+        Returns:
+            A list of adjacent vertices.
+
+        Raises:
+            VertexNotFoundError: If the specified vertex is not found.
         """
         vertex = self._find_vertex(label)
         if vertex:
@@ -174,10 +259,14 @@ class Graph:
             raise VertexNotFoundError("Location not found.")
 
     def is_adjacent(self, label1, label2) -> bool:
-        """
-        Checks two vertices and returns if they are adjacent.
-        :param label1: label of the first vertex to check
-        :param label2: label of the second vertex to check.
+        """Check if two vertices are adjacent.
+
+        Args:
+            label1: Label of the first vertex to check.
+            label2: Label of the second vertex to check.
+
+        Returns:
+            True if the vertices are adjacent, False otherwise.
         """
         vertex1 = self._find_vertex(label1)
         vertex2 = self._find_vertex(label2)
@@ -188,9 +277,7 @@ class Graph:
         return False
 
     def display_as_list(self) -> None:
-        """
-        Displays the graph as an adjacency list.
-        """
+        """Display the graph as an adjacency list."""
         for vertex in self.vertices:
             print(f"{vertex.get_value()} ", end="")
             if vertex.get_value().get_adjacent():
@@ -201,9 +288,7 @@ class Graph:
             print()
 
     def display_as_matrix(self):
-        """
-        Displays the graph as an adjacency matrix.
-        """
+        """Display the graph as an adjacency matrix."""
         matrix = [[0] * self.count for _ in range(self.count)]
 
         for row in range(len(matrix)):
@@ -225,9 +310,13 @@ class Graph:
             print()
 
     def _find_vertex(self, label):
-        """
-        Helper function to find vertex given a label within the graph.
-        :param label:
+        """Find a vertex given a label within the graph.
+
+        Args:
+            label: The label of the vertex to find.
+
+        Returns:
+            The vertex if found, None otherwise.
         """
         for vertex in self.vertices:
             if vertex.get_value().get_label().casefold() == label.casefold():
@@ -235,23 +324,31 @@ class Graph:
         return None
 
     def _find_vertex_index(self, label):
-        """
-        Helper function to find the index of a vertex using its label.
-        Used in delete_vertex
-        :param label: label of the vertex to find
-        :return: index of the vertex
+        """Find the index of a vertex using its label.
+
+        Args:
+            label: Label of the vertex to find.
+
+        Returns:
+            The index of the vertex if found, None otherwise.
         """
         for i in range(len(self.vertices)):
             if self.vertices[i].get_value().get_label() == label:
                 return i
 
     def dijkstra(self, start_label: str, end_label: str) -> tuple[float, list]:
-        """
-        Finds the shortest path between two vertices using dijkstra's algorithm.
-        :param start_label: label of the start vertex
-        :param end_label: label of the end vertex
-        :return: tuple containing the distance and the path between the two vertices
-        :raises: VertexNotFoundError, PathNotFound
+        """Find the shortest path between two vertices using Dijkstra's algorithm.
+
+        Args:
+            start_label: Label of the start vertex.
+            end_label: Label of the end vertex.
+
+        Returns:
+            A tuple containing the distance and the path between the two vertices.
+
+        Raises:
+            VertexNotFoundError: If one or both vertices are not found.
+            PathNotFound: If no path exists between the provided locations.
         """
         if not self.has_vertex(start_label) or not self.has_vertex(end_label):
             raise VertexNotFoundError("Cannot find one or both locations to perform dijkstra's algorithm")
@@ -295,9 +392,16 @@ class Graph:
         return final_distance, self._reconstruct_path(prev, start, end, vertices_list)
 
     def _reconstruct_path(self, prev, start, end, vertices_list):
-        """
-        Reconstructs the path from the start to the end vertex.
-        Helper function for dijkstra's algorithm.
+        """Reconstruct the path from the start to the end vertex.
+
+        Args:
+            prev: List of previous vertices in the path.
+            start: The start vertex.
+            end: The end vertex.
+            vertices_list: List of all vertices in the graph.
+
+        Returns:
+            The reconstructed path from start to end.
         """
         path = []
         current = end
@@ -308,8 +412,17 @@ class Graph:
         return path
 
     def is_path(self, start_label, end_label) -> bool:
-        """
-        Performs a bread-first search of the graph and checks if a path exists between two nodes.
+        """Perform a breadth-first search of the graph and check if a path exists between two nodes.
+
+        Args:
+            start_label: Label of the start vertex.
+            end_label: Label of the end vertex.
+
+        Returns:
+            True if a path exists, False otherwise.
+
+        Raises:
+            GraphEmptyError: If the graph is empty.
         """
         if self.count == 0:
             raise GraphEmptyError("Cannot perform BFS on empty graph.")
@@ -337,24 +450,30 @@ class Graph:
 
 
 class VertexNotFoundError(Exception):
+    """Exception raised when a vertex is not found in the graph."""
     pass
 
 
 class EdgeToSameVertex(Exception):
+    """Exception raised when attempting to add an edge from a vertex to itself."""
     pass
 
 
 class EdgeExistsError(Exception):
+    """Exception raised when an edge already exists or doesn't exist when expected."""
     pass
 
 
 class VertexExistsError(Exception):
+    """Exception raised when a vertex already exists in the graph."""
     pass
 
 
 class GraphEmptyError(Exception):
+    """Exception raised when attempting to perform operations on an empty graph."""
     pass
 
 
 class PathNotFound(Exception):
+    """Exception raised when a path between two vertices is not found."""
     pass

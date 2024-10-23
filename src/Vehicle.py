@@ -46,7 +46,7 @@ class Vehicle:
 
     def set_battery_level(self, battery_level: int):
         if battery_level > 100 or battery_level < 0:
-            raise ValueError("Battery level must be between 0 and 100")
+            raise InvalidBatteryException("Invalid battery percentage, must be between 0-100.")
         self.battery_level = battery_level
 
 
