@@ -1,3 +1,10 @@
+"""
+test_graph.py
+DSA [COMP1002] Assignment
+Author: Jai Dutta
+Student ID: 22073372
+This file contains the tests for the Graph class.
+"""
 import pytest
 from Graph import Graph, VertexNotFoundError, EdgeToSameVertex, EdgeExistsError, VertexExistsError, GraphEmptyError
 

@@ -1,3 +1,11 @@
+"""
+Menu.py
+DSA [COMP1002] Assignment
+Author: Jai Dutta
+Student ID: 22073372
+This file contains the menu for the simulation.
+"""
+
 import os
 from Graph import VertexExistsError, EdgeExistsError, VertexNotFoundError, EdgeToSameVertex
 from Sorting import *
@@ -9,6 +17,11 @@ green = "\033[0;32m"
 bold = "\033[1m"
 end = "\033[0m"
 
+"""
+Dictionary of menu options for the simulation.
+Key: Integer input
+Value: String of the menu option
+"""
 menu_options = {
     1: "Add a new vehicle",
     2: "Remove a vehicle",
@@ -24,6 +37,10 @@ menu_options = {
 
 
 def print_menu(menu_options: dict):
+    """
+    Prints the menu
+    :param menu_options: Dictionary of menu options
+    """
     print("-" * 50)
     print(f"{red}{bold}Welcome to the Autonomous Vehicle Management System{end}")
     print("-" * 50)
@@ -33,6 +50,11 @@ def print_menu(menu_options: dict):
 
 
 def get_choice(menu_options: dict):
+    """
+    Grabs and validates the user's choice from the menu options.
+    :param menu_options: Dictionary of menu options
+    :return: Integer of the user's choice
+    """
     while True:
         try:
             choice = int(input("Please enter option: "))
@@ -45,10 +67,18 @@ def get_choice(menu_options: dict):
 
 
 def clear_screen():
+    """
+    Clears the screen
+    """
     os.system("cls" if os.name == "nt" else "clear")
 
 
 def main_menu(graph, vehicle_hash_table):
+    """
+    Main menu for the simulation.
+    :param graph: Graph of the simulation
+    :param vehicle_hash_table: Hash table of the vehicles in the simulation
+    """
     running = True
 
     while running:

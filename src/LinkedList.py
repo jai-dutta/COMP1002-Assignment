@@ -1,3 +1,10 @@
+"""
+LinkedList.py
+DSA [COMP1002] Assignment
+Author: Jai Dutta
+Student ID: 22073372
+This file contains the LinkedList class, which is used to represent a linked list.
+"""
 
 class ListNode:
     def __init__(self, value):

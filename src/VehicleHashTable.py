@@ -1,3 +1,12 @@
+"""
+VehicleHashTable.py
+DSA [COMP1002] Assignment
+Author: Jai Dutta
+Student ID: 22073372
+This file contains the VehicleHashTable class, which is used to store vehicles in a hash table,
+as well as the HashEntry class, which is used to store the vehicles in the hash table.
+"""
+
 import numpy as np
 
 class HashEntry:

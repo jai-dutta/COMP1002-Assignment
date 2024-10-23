@@ -1,3 +1,11 @@
+"""
+Main.py
+DSA [COMP1002] Assignment
+Author: Jai Dutta
+Student ID: 22073372
+This file runs the simulation.
+"""
+
 from Graph import *
 from MinHeap import *
 from VehicleHashTable import *

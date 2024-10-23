@@ -1,4 +1,11 @@
-import time
+"""
+Sorting.py
+DSA [COMP1002] Assignment
+Author: Jai Dutta
+Student ID: 22073372
+This file contains the sorting functions (heapsort and quicksort) for the simulation.
+"""
+
 from random import randint
 
 from MinHeap import *

@@ -1,6 +1,11 @@
-from operator import index
-from Queue import Queue
-from Stack import Stack
+"""
+Graph.py
+DSA [COMP1002] Assignment
+Author: Jai Dutta
+Student ID: 22073372
+This file contains the Graph class, which represents a weighted, undirected graph.
+"""
+
 from LinkedList import LinkedList
 from MinHeap import *
 
@@ -223,7 +228,7 @@ class Graph:
         :param label:
         """
         for vertex in self.vertices:
-            if vertex.get_value().get_label() == label:
+            if vertex.get_value().get_label().casefold() == label.casefold():
                 return vertex.get_value()
         return None
 

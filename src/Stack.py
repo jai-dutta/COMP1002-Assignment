@@ -1,5 +1,12 @@
-from LinkedList import LinkedList
+"""
+Stack.py
+DSA [COMP1002] Assignment
+Author: Jai Dutta
+Student ID: 22073372
+This file contains the Stack class.
+"""
 
+from LinkedList import LinkedList
 
 class Stack:
     """
@@ -7,7 +14,6 @@ class Stack:
 
     """
     def __init__(self):
-        #use numpy array filled with zeros as the array data structure for the stack to be based on.
         self.stack = LinkedList()
         # count to keep track of items
         self.count = 0
