@@ -6,13 +6,14 @@ Student ID: 22073372
 This file contains the Vehicle class, which is used to represent a vehicle in the simulation.
 """
 
+
 class Vehicle:
     def __init__(self, ID: str, battery_level: int):
         self.ID = ID
         self.location = None
         self.destination = None
         self.distance_to_destination = 0
-        
+
         if battery_level > 100 or battery_level < 0:
             raise InvalidBatteryException("Invalid battery percentage, must be between 0-100.")
         self.battery_level = battery_level

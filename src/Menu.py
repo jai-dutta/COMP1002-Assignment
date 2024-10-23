@@ -7,10 +7,11 @@ This file contains the menu for the simulation.
 """
 
 import os
+
 from Graph import PathNotFound, VertexExistsError, EdgeExistsError, VertexNotFoundError, EdgeToSameVertex
 from Sorting import *
-from VehicleHashTable import *
 from Vehicle import *
+from VehicleHashTable import *
 
 red = "\033[0;31m"
 green = "\033[0;32m"
@@ -114,13 +115,15 @@ def main_menu(graph, vehicle_hash_table):
                 sorted_vehicles = sort_by_distance(vehicles)
                 vehicle = sorted_vehicles[0]
                 if len(vehicles) > 0:
-                    print(f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
+                    print(
+                        f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
                     input("Press Enter to continue...")
             case 6:
                 sorted_vehicles = sort_by_battery(vehicles)
                 vehicle = sorted_vehicles[0]
                 if len(vehicles) > 0:
-                    print(f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
+                    print(
+                        f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
                     input("Press Enter to continue...")
             case 7:
                 add_location(graph)
@@ -140,6 +143,7 @@ def sort_by_battery(vehicles):
     else:
         print(f"{red}{bold}No vehicles in the system.{end}")
         input("Press Enter to continue...")
+
 
 def sort_by_distance(vehicles):
     if len(vehicles) > 0:
@@ -195,7 +199,8 @@ def add_location(graph):
 def _print_vehicle_from_arr(vehicle_arr, full_info: bool):
     for vehicle in vehicle_arr:
         if full_info:
-            print(f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
+            print(
+                f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
         else:
             print(f"{vehicle}")
 
@@ -252,7 +257,8 @@ def update_vehicle(graph, vehicle_hash_table):
     if graph.has_vertex(destination_id):
         try:
             distance_to_dest, path = graph.dijkstra(location_id, destination_id)
-            print(f"{green}{bold}Path from {location_id} to {destination_id} found with a distance of {distance_to_dest}{end}")
+            print(
+                f"{green}{bold}Path from {location_id} to {destination_id} found with a distance of {distance_to_dest}{end}")
             vehicle.set_destination(destination_id)
             vehicle.set_distance_to_destination(distance_to_dest)
         except PathNotFound:
@@ -283,6 +289,7 @@ def remove_vehicle(vehicle_hash_table):
         return
 
     input("Press Enter to continue...")
+
 
 def add_vehicle(vehicle_hash_table):
     vehicle_id = input("Enter vehicle ID: ")

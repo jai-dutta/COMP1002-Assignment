@@ -6,6 +6,7 @@ Student ID: 22073372
 This file contains the LinkedList class, which is used to represent a linked list.
 """
 
+
 class ListNode:
     def __init__(self, value):
         self.value = value
@@ -14,25 +15,27 @@ class ListNode:
 
     def get_value(self):
         return self.value
-    
+
     def set_value(self, value):
         self.value = value
 
     def get_next(self):
         return self.next
-    
+
     def get_prev(self):
         return self.prev
-    
+
     def set_next(self, next_node: "ListNode"):
         self.next = next_node
 
     def set_prev(self, prev_node: "ListNode"):
         self.prev = prev_node
 
+
 class LinkedListIterator:
     def __init__(self, head):
         self.current = head
+
     def __iter__(self):
         return self
 
@@ -92,7 +95,7 @@ class LinkedList:
         new_node = ListNode(value)
 
         # if empty, then initialise this new node as the head.
-        if self.is_empty(): 
+        if self.is_empty():
             self.head = new_node
             self.tail = new_node
         # if not empty, put the current head as the next in line for the new node. this makes the new node the new head
@@ -101,7 +104,6 @@ class LinkedList:
             self.head.set_prev(new_node)
             self.head = new_node
         self.count += 1
-
 
     def insert_before(self, value, find_index):
         new_node = ListNode(value)
@@ -131,7 +133,6 @@ class LinkedList:
                         prev_node.set_next(new_node)
                     cn.set_prev(new_node)
             self.count += 1
-
 
     def insert_at(self, value, find_index):
         new_node = ListNode(value)
@@ -163,8 +164,6 @@ class LinkedList:
         if not inserted:
             print("Failed to insert value.")
 
-
-
     def insert_last(self, value):
         new_node = ListNode(value)
 
@@ -178,15 +177,14 @@ class LinkedList:
             self.tail = new_node
         self.count += 1
 
-            
     def is_empty(self):
         return self.head is None
-    
+
     def peek_first(self):
         if self.is_empty():
             raise ListEmpty()
         return self.head.get_value()
-    
+
     def peek_last(self):
         if self.is_empty():
             raise ListEmpty()
@@ -195,7 +193,7 @@ class LinkedList:
     def remove_first(self):
         if self.is_empty():
             raise ListEmpty()
-        
+
         node_value = self.head.get_value()
         self.head = self.head.get_next()
 
@@ -205,7 +203,7 @@ class LinkedList:
             self.tail = None
         self.count -= 1
         return node_value
-    
+
     def remove_last(self):
         if self.is_empty():
             raise ListEmpty()
@@ -224,7 +222,7 @@ class LinkedList:
     def remove_at(self, index):
         if self.is_empty():
             raise ListEmpty()
-        if index < 0 or self.count-1 < index:
+        if index < 0 or self.count - 1 < index:
             raise IndexError("Index was out of bounds for LinkedList object!")
 
         if index == 0:
@@ -244,6 +242,7 @@ class LinkedList:
             else:
                 print("Index not found.")
             self.count -= 1
+
 
 class ListEmpty(Exception):
     def __init__(self):

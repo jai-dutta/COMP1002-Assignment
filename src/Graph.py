@@ -195,8 +195,9 @@ class Graph:
             print(f"{vertex.get_value()} ", end="")
             if vertex.get_value().get_adjacent():
                 for count, (adjacent_vertex, weight) in enumerate(vertex.get_value().get_adjacent()):
-                    print(f"{f'- {weight} > {adjacent_vertex} ' if count + 1 < len(vertex.get_value().get_adjacent()) else f'- {weight} > {adjacent_vertex} '} ",
-                          end="")
+                    print(
+                        f"{f'- {weight} > {adjacent_vertex} ' if count + 1 < len(vertex.get_value().get_adjacent()) else f'- {weight} > {adjacent_vertex} '} ",
+                        end="")
             print()
 
     def display_as_matrix(self):
@@ -331,23 +332,29 @@ class Graph:
                     return True
                 if not w.get_visited():  # Only consider unvisited adjacent vertices
                     w.set_visited()  # Mark as visited before enqueueing
-                    q.enqueue(w) 
+                    q.enqueue(w)
         return False
-    
+
+
 class VertexNotFoundError(Exception):
     pass
+
 
 class EdgeToSameVertex(Exception):
     pass
 
+
 class EdgeExistsError(Exception):
     pass
+
 
 class VertexExistsError(Exception):
     pass
 
+
 class GraphEmptyError(Exception):
     pass
+
 
 class PathNotFound(Exception):
     pass

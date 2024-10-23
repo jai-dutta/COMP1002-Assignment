@@ -8,22 +8,23 @@ This file contains the Stack class.
 
 from LinkedList import LinkedList
 
+
 class Stack:
     """
     A class used to represent a stack. Linked list implementation.
 
     """
+
     def __init__(self):
         self.stack = LinkedList()
         # count to keep track of items
         self.count = 0
 
-
     # return count of items in stack
     def get_count(self):
         return self.count
 
-    #return true if stack is empty
+    # return true if stack is empty
     def is_empty(self):
         return self.count == 0
 

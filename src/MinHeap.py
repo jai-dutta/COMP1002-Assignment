@@ -29,6 +29,7 @@ class PriorityQueueEntry:
     def set_value(self, value: object):
         self.value = value
 
+
 class MinHeap:
     def __init__(self, size):
         self.size = size
@@ -46,7 +47,7 @@ class MinHeap:
 
     # iterative
     def trickle_up(self, current_index):
-        parent_index = (current_index-1) // 2
+        parent_index = (current_index - 1) // 2
         while current_index > 0 and self.heap[current_index].get_priority() < self.heap[parent_index].get_priority():
             self.heap[parent_index], self.heap[current_index] = self.heap[current_index], self.heap[parent_index]
             current_index = parent_index
@@ -93,6 +94,7 @@ class MinHeap:
 class HeapFullException(Exception):
     def __init__(self, message="Heap is full"):
         super().__init__(message)
+
 
 class HeapEmptyException(Exception):
     def __init__(self, message="Heap is empty"):

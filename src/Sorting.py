@@ -6,11 +6,11 @@ Student ID: 22073372
 This file contains the sorting functions (heapsort and quicksort) for the simulation.
 """
 
-from random import randint
+import numpy as np
 
 from MinHeap import *
-import numpy as np
 from Vehicle import Vehicle
+
 
 class VehicleEntry:
     def __init__(self, priority: float, vehicle: Vehicle):
@@ -74,6 +74,7 @@ def quick_sort(arr):
     quick_sort_recurse(arr, 0, len(arr) - 1)
     return arr
 
+
 def quick_sort_recurse(arr, left_index, right_index):
     if right_index > left_index:
         pivot_index = (left_index + right_index) // 2
@@ -81,6 +82,7 @@ def quick_sort_recurse(arr, left_index, right_index):
 
         quick_sort_recurse(arr, left_index, new_pivot_index - 1)
         quick_sort_recurse(arr, new_pivot_index + 1, right_index)
+
 
 def do_partitioning(arr, left_index, right_index, pivot_index):
     pivot_val = arr[pivot_index]
@@ -95,6 +97,7 @@ def do_partitioning(arr, left_index, right_index, pivot_index):
 
     arr[right_index], arr[store_index] = arr[store_index], arr[right_index]
     return store_index
+
 
 def find_highest_battery_level(vehicles):
     quick_sort(vehicles)

@@ -9,11 +9,13 @@ as well as the HashEntry class, which is used to store the vehicles in the hash 
 
 import numpy as np
 
+
 class HashEntry:
     def __init__(self, key="", value=None):
         self.key = key
         self.value = value
         self.state = 0 if key == "" else 1
+
     # Getters
     def get_key(self):
         return self.key
@@ -36,7 +38,7 @@ class VehicleHashTable:
 
         for i in range(self.hash_array.size):
             self.hash_array[i] = HashEntry()
-    
+
     def __str__(self):
         output = ""
         for i in self.hash_array:
@@ -73,7 +75,7 @@ class VehicleHashTable:
             print(f"Could not insert {key}:{value}")
         else:
             pass
-            #print(f"Successfully inserted {key}:{value}")
+            # print(f"Successfully inserted {key}:{value}")
 
     def get(self, key):
         hash_index = self._find(key)
@@ -146,7 +148,7 @@ class VehicleHashTable:
             line = file.readline()
             while line:
                 line_contents = line.strip().split(",")
-                self.put(line_contents[0],line_contents[1])
+                self.put(line_contents[0], line_contents[1])
                 line = file.readline()
 
     def size_down_check(self):
@@ -207,8 +209,10 @@ class VehicleHashTable:
                     ii += 2
         return prime_val
 
+
 class VehicleNotFoundError(Exception):
     pass
+
 
 class DuplicateVehicleFound(Exception):
     pass
