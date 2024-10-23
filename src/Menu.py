@@ -7,7 +7,7 @@ This file contains the menu for the simulation.
 """
 
 import os
-from Graph import VertexExistsError, EdgeExistsError, VertexNotFoundError, EdgeToSameVertex
+from Graph import PathNotFound, VertexExistsError, EdgeExistsError, VertexNotFoundError, EdgeToSameVertex
 from Sorting import *
 from VehicleHashTable import *
 from Vehicle import *
@@ -155,11 +155,10 @@ def check_path(graph):
     try:
         vertex1_id = input("Enter first location ID: ")
         vertex2_id = input("Enter second location ID: ")
-        distance = graph.is_path(vertex1_id, vertex2_id)
-        if distance:
-            print(f"{green}A path exists between {vertex1_id} and {vertex2_id}, with a distance of {distance}.{end}")
-        else:
-            print(f"{red}No path exists between {vertex1_id} and {vertex2_id}{end}")
+        distance, _ = graph.dijkstra(vertex1_id, vertex2_id)
+        print(f"{green}A path exists between {vertex1_id} and {vertex2_id}, with a distance of {distance}.{end}")
+    except PathNotFound:
+        print(f"{red}{bold}Error: {e}{end}")
     except VertexNotFoundError as e:
         print(f"{red}{bold}Error: {e}{end}")
     input("Press Enter to continue...")
@@ -190,7 +189,6 @@ def add_location(graph):
         print(f"{green}{bold}Location added successfully{end}")
     except VertexExistsError as e:
         print(f"{red}{bold}Error: {e}{end}")
-
     input("Press Enter to continue...")
 
 
@@ -252,16 +250,13 @@ def update_vehicle(graph, vehicle_hash_table):
 
     destination_id = input("Enter destination ID: ")
     if graph.has_vertex(destination_id):
-        print(f"{green}{bold}Destination found{end}")
-
-        distance_to_dest = graph.is_path(location_id, destination_id)
-        if distance_to_dest:
-            print(
-                f"{green}{bold}Path from {location_id} to {destination_id} found with a distance of {distance_to_dest}{end}")
+        try:
+            distance_to_dest, path = graph.dijkstra(location_id, destination_id)
+            print(f"{green}{bold}Path from {location_id} to {destination_id} found with a distance of {distance_to_dest}{end}")
             vehicle.set_destination(destination_id)
             vehicle.set_distance_to_destination(distance_to_dest)
-        else:
-            print(f"{red}{bold}No path from {location_id} to {destination_id} was found.{end}")
+        except PathNotFound:
+            print(f"{red}{bold}Error: {e}{end}")
             input("Press Enter to continue...")
             return
     else:
@@ -302,7 +297,7 @@ def add_vehicle(vehicle_hash_table):
         vehicle = Vehicle(vehicle_id, battery_level)
 
     except InvalidBatteryException as e:
-        print(f"{red}{bold}{e}{end}")
+        print(f"{red}{bold}Error: {e}{end}")
         input("Press Enter to continue...")
         return
 

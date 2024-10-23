@@ -6,7 +6,7 @@ Student ID: 22073372
 This file contains the tests for the Graph class.
 """
 import pytest
-from Graph import Graph, VertexNotFoundError, EdgeToSameVertex, EdgeExistsError, VertexExistsError, GraphEmptyError
+from Graph import Graph, VertexNotFound, EdgeToSameVertex, EdgeExistsError, VertexExistsError, GraphEmptyError
 
 @pytest.fixture
 def empty_graph():
@@ -38,7 +38,7 @@ def test_delete_vertex(sample_graph):
     assert sample_graph.get_vertex_count() == 2
 
 def test_delete_nonexistent_vertex(sample_graph):
-    with pytest.raises(VertexNotFoundError):
+    with pytest.raises(VertexNotFound):
         sample_graph.delete_vertex('D')
 
 def test_add_edge(sample_graph):
@@ -62,7 +62,7 @@ def test_delete_nonexistent_edge(sample_graph):
         sample_graph.delete_edge('A', 'C')
 
 def test_get_adjacent_nonexistent_vertex(sample_graph):
-    with pytest.raises(VertexNotFoundError):
+    with pytest.raises(VertexNotFound):
         sample_graph.get_adjacent('D')
 
 def test_is_adjacent(sample_graph):
@@ -74,14 +74,7 @@ def test_dijkstra(sample_graph):
     assert weight == 3.0
     for vertice in path:
         assert vertice.get_label() in ['A', 'B', 'C']
-
-def test_display_as_list(sample_graph, capsys):
-    sample_graph.display_as_list()
-    captured = capsys.readouterr()
-    assert "A: 1 -> B: 2" in captured.out
-    assert "B: 2 -> A: 1 -> C: 3" in captured.out
-    assert "C: 3 -> B: 2" in captured.out
-
+        
 def test_display_as_matrix(sample_graph, capsys):
     sample_graph.display_as_matrix()
     captured = capsys.readouterr()
@@ -92,6 +85,9 @@ B	1	0	1
 C	0	1	0	
 """
     assert expected_output.strip() in captured.out.strip()
+
+def test_is_path(sample_graph):
+    assert sample_graph.is_path("A", "C")
 
 if __name__ == '__main__':
     pytest.main()

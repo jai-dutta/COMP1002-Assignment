@@ -1,9 +1,10 @@
-
-# COMP1002 - Data Structures and Algorithms
-# Practical 08 - Author: Jai Dutta
-# Date: 8/10/2024  - SEMESTER 2 B-COMP
-#
-# This file contains the class for Heap and HeapEntry
+"""
+MinHeap.py
+DSA [COMP1002] Assignment
+Author: Jai Dutta
+Student ID: 22073372
+This file contains the MinHeap class, representing a MinHeap used for a priority queue for dijkstra's algorithm.
+"""
 
 import numpy as np
 

@@ -7,7 +7,6 @@ This file runs the simulation.
 """
 
 from Graph import *
-from MinHeap import *
 from VehicleHashTable import *
 from Menu import main_menu
 

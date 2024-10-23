@@ -8,6 +8,7 @@ This file contains the Graph class, which represents a weighted, undirected grap
 
 from LinkedList import LinkedList
 from MinHeap import *
+from Queue import Queue
 
 
 class GraphVertex:
@@ -79,7 +80,7 @@ class Graph:
         :param value: Value of the vertex
         """
         if self._find_vertex(label):
-            raise VertexExistsError("Duplicate vertex found")
+            raise VertexExistsError("Duplicate location found.")
 
         new_vertex = GraphVertex(label, value)
 
@@ -117,7 +118,7 @@ class Graph:
         :param weight: weight of the edge
         """
         if self.is_adjacent(label1, label2):
-            raise EdgeExistsError("Edge exists. Cannot add multiple edges in a simple graph.")
+            raise EdgeExistsError("Road exists. Cannot add multiple roads in a simple graph.")
 
         vertex1 = self._find_vertex(label1)
         vertex2 = self._find_vertex(label2)
@@ -126,9 +127,9 @@ class Graph:
                 vertex1.set_adjacent(vertex2, weight)
                 vertex2.set_adjacent(vertex1, weight)
             else:
-                raise EdgeToSameVertex("Cannot add edge from vertex to itself.")
+                raise EdgeToSameVertex("Cannot add road from location to itself.")
         else:
-            raise VertexNotFoundError("Cannot find one or both of vertices to add edge.")
+            raise VertexNotFoundError("Cannot find one or both locations to add road.")
 
     def delete_edge(self, label1, label2) -> None:
         """
@@ -137,7 +138,7 @@ class Graph:
         :param label2: label of the second vertex
         """
         if not self.is_adjacent(label1, label2):
-            raise EdgeExistsError("Edge to delete does not exist.")
+            raise EdgeExistsError("Road to delete does not exist.")
 
         vertex1 = self._find_vertex(label1)
         vertex2 = self._find_vertex(label2)
@@ -146,7 +147,7 @@ class Graph:
                 vertex1.remove_adjacent(vertex2)
                 vertex2.remove_adjacent(vertex1)
             else:
-                raise EdgeToSameVertex("Cannot remove edge from vertex to itself.")
+                raise EdgeToSameVertex("Cannot remove road from location to itself.")
 
     def has_vertex(self, label) -> bool:
         """
@@ -170,7 +171,7 @@ class Graph:
         if vertex:
             return vertex.get_adjacent()
         else:
-            raise VertexNotFoundError("Vertex not found.")
+            raise VertexNotFoundError("Location not found.")
 
     def is_adjacent(self, label1, label2) -> bool:
         """
@@ -249,11 +250,10 @@ class Graph:
         :param start_label: label of the start vertex
         :param end_label: label of the end vertex
         :return: tuple containing the distance and the path between the two vertices
+        :raises: VertexNotFoundError, PathNotFound
         """
-        if self.count == 0:
-            raise GraphEmptyError("Cannot perform dijkstra's algorithm on empty graph.")
         if not self.has_vertex(start_label) or not self.has_vertex(end_label):
-            raise VertexNotFoundError("Cannot find one or both vertices to perform dijkstra's algorithm")
+            raise VertexNotFoundError("Cannot find one or both locations to perform dijkstra's algorithm")
 
         start = self._find_vertex(start_label)
         end = self._find_vertex(end_label)
@@ -290,7 +290,7 @@ class Graph:
 
         final_distance = distances[vertices_list.index(end)]
         if final_distance == float("inf"):
-            raise PathNotFound("Path not found between provided vertices.")
+            raise PathNotFound("Path not found between provided locations.")
         return final_distance, self._reconstruct_path(prev, start, end, vertices_list)
 
     def _reconstruct_path(self, prev, start, end, vertices_list):
@@ -306,36 +306,39 @@ class Graph:
         path.reverse()
         return path
 
-    def is_path(self, start_label, end_label) -> int | bool:
+    def is_path(self, start_label, end_label) -> bool:
         """
-        Checks if there is a path between two vertices using dijkstra's algorithm.
-
-        Note: I know we were instructed to use BFS or DFS for this, but I have implemented Dijkstra's algorithm
-        to find the shortest path between two vertices, so I thought it would be more efficient to use it here.
-
-        :param start_label: label of the start vertex
-        :param end_label: label of the end vertex
-        :return: Integer (length of path) if there is a path, False otherwise
+        Performs a bread-first search of the graph and checks if a path exists between two nodes.
         """
-        if not self.has_vertex(start_label) or not self.has_vertex(end_label):
-            raise VertexNotFoundError("Cannot find one or both vertices to check for path.")
-        start = self._find_vertex(start_label)
+        if self.count == 0:
+            raise GraphEmptyError("Cannot perform BFS on empty graph.")
+        q = Queue()  # The main queue for BFS
+
+        # Clear the visited status of all vertices
+        for vertex in self.vertices:
+            vertex.get_value().clear_visited()
+
+        v = self._find_vertex(start_label)  # Start from the first vertex
         end = self._find_vertex(end_label)
+        v.set_visited()  # Mark it as visited
+        q.enqueue(v)  # Enqueue the start vertex
 
-        try:
-            distance, _ = self.dijkstra(start_label, end_label)
-            return distance
-        except PathNotFound:
-            return False
+        while not q.is_empty():
+            v = q.dequeue()
 
-
+            for w, _ in v.get_adjacent():
+                if w == end:
+                    return True
+                if not w.get_visited():  # Only consider unvisited adjacent vertices
+                    w.set_visited()  # Mark as visited before enqueueing
+                    q.enqueue(w) 
+        return False
+    
 class VertexNotFoundError(Exception):
     pass
 
-
 class EdgeToSameVertex(Exception):
     pass
-
 
 class EdgeExistsError(Exception):
     pass
@@ -348,4 +351,3 @@ class GraphEmptyError(Exception):
 
 class PathNotFound(Exception):
     pass
-
