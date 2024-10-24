@@ -10,7 +10,7 @@ Student ID: 22073372
 import pytest
 
 # Now use this import statement
-from Graph import Graph, VertexNotFoundError, EdgeToSameVertex, EdgeExistsError, VertexExistsError
+from Graph import *
 
 @pytest.fixture
 def empty_graph():
@@ -104,6 +104,12 @@ C	0	1	0
 """
     assert expected_output.strip() in captured.out.strip()
 
+def test_display_as_list(sample_graph, capsys):
+    sample_graph.display_as_list()
+    captured = capsys.readouterr()
+    expected_output = """
+    A: 1 - 1.0 > B: 2  \nB: 2 - 1.0 > A: 1  - 2.0 > C: 3  \nC: 3 - 2.0 > B: 2"""
+    assert expected_output.strip() in captured.out.strip()
 
 def test_is_path(sample_graph):
     assert sample_graph.is_path("A", "C")

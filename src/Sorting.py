@@ -93,21 +93,18 @@ class VehicleSortHeap(MinHeap):
         for v in vehicles:
             self.add(v.get_distance_to_destination(), v)
 
-        # Extract vehicles in sorted order (smallest to largest)
-        sorted_vehicles = np.empty(len(vehicles), dtype=object)
-
         # Loop from the end of the array towards the start
         for i in range(len(vehicles)):
-            sorted_vehicles[i] = self.remove().get_vehicle()
+            vehicles[i] = self.remove().get_vehicle()
 
-        return sorted_vehicles
+        return vehicles
 
     def find_nearest_vehicle(self, vehicles: np.ndarray) -> Vehicle:
         """
         Find the nearest vehicle to it's destination using heapsort.
         """
         if self.count == 0:
-            raise HeapEmptyException("Heap empty")
+            raise VehiclesEmptyException("No vehicles are in the AVMS.")
         return self.heapsort_vehicles(vehicles)[0]
 
 
@@ -154,4 +151,21 @@ def find_highest_battery_level(vehicles: np.ndarray) -> Vehicle:
     Find the vehicle with the highest battery level using quicksort.
     """
     quick_sort(vehicles)
-    return vehicles[0]
+    if len(vehicles) > 0:
+        return vehicles[0]
+    else:
+        raise VehiclesEmptyException("No vehicles are in the AVMS.")
+    
+def find_nearest_vehicle(vehicles: np.ndarray) -> Vehicle:
+    """
+    Find the nearest vehicle to it's destination using heapsort.
+    """
+    heap = VehicleSortHeap(len(vehicles))
+    return heap.find_nearest_vehicle(vehicles)
+
+class VehiclesEmptyException(Exception):
+    """
+    Exception raised when there are no vehicles in the array.
+    """
+    pass
+

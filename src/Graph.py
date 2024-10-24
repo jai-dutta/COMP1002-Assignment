@@ -23,7 +23,7 @@ class GraphVertex:
         links: A LinkedList of adjacent vertices and their edge weights.
     """
 
-    def __init__(self, label: str, value: any):
+    def __init__(self, label: str, value: any = None):
         """Initialize a GraphVertex object.
 
         Args:
@@ -135,7 +135,7 @@ class Graph:
         self.vertices = LinkedList()
         self.count = 0
 
-    def add_vertex(self, label: str, value: any = 0) -> None:
+    def add_vertex(self, label: str, value: any = None) -> None:
         """Add a vertex to the graph. Maintains sorted order.
 
         Args:
@@ -303,7 +303,7 @@ class Graph:
         """Display the graph as an adjacency list."""
         for vertex in self.vertices: # Iterate through each vertex in the linked list
             print(f"{vertex.get_value()} ", end="") # Print the vertex label as the base
-            if vertex.get_value().get_adjacent(): # If the vertex has adjacent vertices
+            if len(vertex.get_value().get_adjacent()) > 0: # If the vertex has adjacent vertices
                 for count, (adjacent_vertex, weight) in enumerate(vertex.get_value().get_adjacent()): # Iterate through the adjacency linked list, using the count to determine if it's the last adjacent vertex
                     # Sorry this is very messy. The purpose of this is to stop the arrow from being printed after the last adjacent vertex.
                     # Print the arrow between vertices with weight in the middle e.g: - 4 > - Print the adjacent vertice label - If count is less than the number of adjacent vertices, print another arrow as there will be another vertex to print
@@ -518,3 +518,5 @@ class GraphEmptyError(Exception):
 class PathNotFound(Exception):
     """Exception raised when a path between two vertices is not found."""
     pass
+
+

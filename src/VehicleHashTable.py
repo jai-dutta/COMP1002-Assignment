@@ -60,12 +60,18 @@ class VehicleHashTable:
                 output += (f"{i.get_value()}\n")
         return output
 
-    def put(self, key: str, value: Vehicle):
+    def get_count(self) -> int:
+        """
+        Returns the number of vehicles in the hash table.
+        """
+        return self.count
+
+    def put(self, vehicle: Vehicle):
         """
         Checks if the hash table needs to be resized, then inserts the vehicle into the hash table.
         """
         self.size_up_check()
-
+        key = vehicle.get_ID()
         hash_index = self._hash(key)
         original_index = hash_index
 
@@ -75,30 +81,27 @@ class VehicleHashTable:
         while not inserted and not give_up:
             if self.hash_array[hash_index].get_key() == key:
                 raise DuplicateVehicleFound(f"Could not insert vehicle ID: [{key}]. Duplicate ID found.")
-            elif self.hash_array[hash_index].get_state() == 0:
-                self.hash_array[hash_index] = HashEntry(key, value)
+            elif self.hash_array[hash_index].get_state() != 1:
+                self.hash_array[hash_index] = HashEntry(key, vehicle)
                 self.count += 1
                 inserted = True
             else:
                 hash_index = (hash_index + 1) % self.hash_array.size
                 if self.hash_array[hash_index].get_state() != 1:
-                    self.hash_array[hash_index] = HashEntry(key, value)
+                    self.hash_array[hash_index] = HashEntry(key, vehicle)
                     self.count += 1
                     inserted = True
                 if hash_index == original_index:
                     give_up = True
         if not inserted:
-            raise VehicleNotFoundError(f"Could not insert {key}:{value}")
+            raise VehicleNotFoundError(f"Could not insert {key}:{vehicle}")
 
     def get(self, key: str) -> Vehicle:
         """
         Finds the vehicle in the hash table and returns it.
         """
         hash_index = self._find(key)
-        if hash_index:
-            return self.hash_array[hash_index].get_value()
-        else:
-            raise VehicleNotFoundError(f"ID [{key}] was not found.")
+        return self.hash_array[hash_index].get_value()
 
     def remove(self, key: str):
         """
@@ -118,16 +121,17 @@ class VehicleHashTable:
         Returns the load factor of the hash table.
         """
         lf = self.count / self.hash_array.size
-        return round(lf, 1)
+        return round(lf, 2)
 
     def has_key(self, key: str) -> bool:
         """
         Checks if the hash table contains the given key.
         """
-        hash_index = self._find(key)
-        if self.hash_array[hash_index].get_key() == key:
-            return True
-        return False
+        try:
+            hash_index = self._find(key)
+            return key == self.hash_array[hash_index].get_key()
+        except VehicleNotFoundError:
+            return False
 
     def _find(self, key: str) -> int:
         """
@@ -142,7 +146,7 @@ class VehicleHashTable:
         while not found and not give_up:
             if self.hash_array[hash_index].get_state() == 0:
                 give_up = True
-            elif self.hash_array[hash_index].get_key() == key:
+            elif self.hash_array[hash_index].get_key() == key and self.hash_array[hash_index].get_state() == 1:
                 found = True
             else:
                 hash_index = (hash_index + 1) % self.hash_array.size
@@ -219,7 +223,7 @@ class VehicleHashTable:
         # copy existing entries to new table
         for entry in temp:
             if entry.get_state() == 1:
-                self.put(entry.get_key(), entry.get_value())
+                self.put(entry.get_value())
 
     def _hash(self, key: str) -> int:
         """

@@ -107,6 +107,7 @@ def main_menu(graph, vehicle_hash_table):
     while running:
         # Export vehicles from hash table to array each time the loop runs (for printing and sorting)
         vehicles = vehicle_hash_table.export_to_array()
+        sort_heap = VehicleSortHeap(len(vehicles))
 
         clear_screen()
 
@@ -143,27 +144,21 @@ def main_menu(graph, vehicle_hash_table):
 
             # Display vehicles
             case 4:
-                display_sorted_vehicles(vehicle_hash_table)
+                display_sorted_vehicles(vehicles, sort_heap)
 
             # Find nearest vehicle
             case 5:
-                sorted_vehicles = sort_by_distance(vehicles)
-                if len(sorted_vehicles) > 0:
-                    vehicle = sorted_vehicles[0]
-                    print(f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
-                    input("Press Enter to continue...")
-                else:
-                    handle_error(f"{red}{bold}No vehicles in the system.{end}")
+                try:
+                    sort_heap.find_nearest_vehicle(vehicles)
+                except VehiclesEmptyException as e:
+                    handle_error(e)
 
             # Find highest battery level
             case 6:
-                sorted_vehicles = sort_by_battery(vehicles)
-                if len(sorted_vehicles) > 0:
-                    vehicle = sorted_vehicles[0]
-                    print(f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
-                    input("Press Enter to continue...")
-                else:
-                    handle_error(f"{red}{bold}No vehicles in the system.{end}")
+                try:
+                    find_highest_battery_level(vehicles)
+                except VehiclesEmptyException as e:
+                    handle_error(e)
 
             # Add location
             case 7:
@@ -202,7 +197,7 @@ def add_vehicle(vehicle_hash_table: VehicleHashTable):
         return handle_error(e)
 
     try:
-        vehicle_hash_table.put(vehicle_id, vehicle)
+        vehicle_hash_table.put( vehicle)
     except DuplicateVehicleFound as e:
         return handle_error(e)
 
@@ -280,6 +275,7 @@ def update_vehicle(graph: Graph, vehicle_hash_table: VehicleHashTable):
         vehicle.set_battery_level(new_battery_lvl)
         vehicle.set_location(location_node)
         vehicle.set_destination(destination_node)
+        vehicle.set_distance_to_destination(distance_to_dest)
     except InvalidBatteryException as e:
         return handle_error(e)
 
@@ -293,13 +289,13 @@ def handle_error(e):
     return
 
 
-def display_sorted_vehicles(vehicle_hash_table: VehicleHashTable):
+def display_sorted_vehicles(vehicles: numpy.ndarray, sort_heap: VehicleSortHeap):
     """Displays all vehicles in the hash table.
 
     Args:
-        vehicle_hash_table: Hash table of the vehicles in the simulation.
+        vehicles: Array of vehicles to sort.
+        sort_heap: Heap to sort the vehicles.
     """
-    vehicles = vehicle_hash_table.export_to_array()
     try:
         choice = int(input("Display by:"
                            "\n[1]. Battery Level [Desc]"
@@ -312,7 +308,7 @@ def display_sorted_vehicles(vehicle_hash_table: VehicleHashTable):
         sorted_vehicles = sort_by_battery(vehicles)
 
     elif choice == 2:
-        sorted_vehicles = sort_by_distance(vehicles)
+        sorted_vehicles = sort_by_distance(vehicles, sort_heap)
 
     else:
         print(f"{red}{bold}Please enter a valid input.{end}")
@@ -322,10 +318,10 @@ def display_sorted_vehicles(vehicle_hash_table: VehicleHashTable):
         _print_vehicle_from_arr(sorted_vehicles, True)
         input("Press Enter to continue...")
     else:
-        handle_error(f"{red}{bold}No vehicles in the system.{end}")
+        handle_error(f"{red}{bold}No vehicles are in the AVMS.{end}")
 
 
-def sort_by_distance(vehicles: numpy.ndarray) -> numpy.ndarray:
+def sort_by_distance(vehicles: numpy.ndarray, vehicle_sort_heap: VehicleSortHeap) -> numpy.ndarray:
     """Sorts vehicles by distance to destination.
 
     Args:
@@ -341,8 +337,7 @@ def sort_by_distance(vehicles: numpy.ndarray) -> numpy.ndarray:
     if not len(vehicles):
         return numpy.array([])
     
-    sort_heap = VehicleSortHeap(len(vehicles))
-    return sort_heap.heapsort_vehicles(vehicles)
+    return vehicle_sort_heap.heapsort_vehicles(vehicles)
 
 def sort_by_battery(vehicles: numpy.ndarray):
     """Sorts vehicles by battery level.
