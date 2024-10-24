@@ -22,13 +22,9 @@ bold = "\033[1m"
 negative = "\033[7m"
 end = "\033[0m"
 
+
 def print_menu():
     """Prints the menu.
-
-    Args:
-        options: Dictionary containing menu options.
-                 Keys: Integer representing the option number.
-                 Values: String describing the menu option.
 
     Returns:
         None
@@ -70,9 +66,6 @@ def print_menu():
 
 def get_choice():
     """Grabs and validates the user's choice from the menu options.
-
-    Args:
-        options: Dictionary containing menu options.
 
     Returns:
         int: The user's choice.
@@ -177,6 +170,7 @@ def main_menu(graph, vehicle_hash_table):
                 print("Thank you for using the Autonomous Vehicle Management System. Goodbye!")
                 running = False
 
+
 def add_vehicle(vehicle_hash_table: VehicleHashTable):
     """Adds a vehicle to the hash table.
 
@@ -220,6 +214,7 @@ def remove_vehicle(vehicle_hash_table: VehicleHashTable):
         return handle_error(e)
 
     input("Press Enter to continue...")
+
 
 def update_vehicle(graph: Graph, vehicle_hash_table: VehicleHashTable):
     """Updates a vehicle in the hash table.
@@ -311,14 +306,13 @@ def display_sorted_vehicles(vehicles: numpy.ndarray, sort_heap: VehicleSortHeap)
         sorted_vehicles = sort_by_distance(vehicles, sort_heap)
 
     else:
-        print(f"{red}{bold}Please enter a valid input.{end}")
-        input("Press Enter to continue...")
+        return handle_error(f"{red}{bold}Please enter a valid input.{end}")
 
     if len(sorted_vehicles) > 0:
         _print_vehicle_from_arr(sorted_vehicles, True)
         input("Press Enter to continue...")
     else:
-        handle_error(f"{red}{bold}No vehicles are in the AVMS.{end}")
+        return handle_error(f"{red}{bold}No vehicles are in the AVMS.{end}")
 
 
 def sort_by_distance(vehicles: numpy.ndarray, vehicle_sort_heap: VehicleSortHeap) -> numpy.ndarray:
