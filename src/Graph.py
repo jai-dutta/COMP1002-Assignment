@@ -314,7 +314,7 @@ class Graph:
         """Display the graph as an adjacency matrix."""
         matrix = np.zeros((self.count, self.count), dtype=int) # Create a 2d array of zeros with the size of the number of vertices
 
-        for row in range(len(matrix)): 
+        for row in range(len(matrix)):
             for col in range(len(matrix)):
                 if self.is_adjacent(self.vertices[row].get_value().get_label(), # For each element in the 2d array, check if the vertices the element corresponds to are adjacent, if so, set the element to 1 to represent the edge
                                     self.vertices[col].get_value().get_label()):
@@ -399,7 +399,7 @@ class Graph:
         distances = np.empty(self.count, dtype=float)
         distances[:] = float("inf")
         distances[vertices_list.index(start)] = 0
-        
+
         # Add start vertex to the priority queue with priority 0 (distance 0)
         pq.add(0, start)
 

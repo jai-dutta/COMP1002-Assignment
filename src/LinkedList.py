@@ -135,7 +135,7 @@ class LinkedList:
         """
         if item < 0:
             raise IndexError("Index must be non-negative")
-    
+
         current = self.head
         current_item = 0
 

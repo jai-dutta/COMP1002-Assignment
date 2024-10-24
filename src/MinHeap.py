@@ -94,7 +94,7 @@ class MinHeap:
             self.trickle_down(0, self.count)
 
         return root_node
-    
+
     def peek(self) -> PriorityQueueEntry:
         """
         Peek at the root node of the heap.
@@ -131,7 +131,7 @@ class MinHeap:
         Get the number of elements in the heap.
         """
         return self.count
-    
+
 
 
 class HeapFullException(Exception):

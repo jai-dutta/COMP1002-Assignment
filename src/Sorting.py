@@ -155,7 +155,7 @@ def find_highest_battery_level(vehicles: np.ndarray) -> Vehicle:
         return vehicles[0]
     else:
         raise VehiclesEmptyException("No vehicles are in the AVMS.")
-    
+
 def find_nearest_vehicle(vehicles: np.ndarray) -> Vehicle:
     """
     Find the nearest vehicle to it's destination using heapsort.

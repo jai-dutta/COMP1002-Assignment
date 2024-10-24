@@ -146,7 +146,7 @@ def main_menu(graph, vehicle_hash_table):
                 except VehiclesEmptyException as e:
                     handle_error(e)
 
-            # Find highest battery level
+            # Find the highest battery level
             case 6:
                 try:
                     find_highest_battery_level(vehicles)
@@ -177,7 +177,7 @@ def add_vehicle(vehicle_hash_table: VehicleHashTable):
     Args:
         vehicle_hash_table: Hash table of the vehicles in the simulation.
     """
-    
+
     vehicle_id = input("Enter vehicle ID: ")
 
     try:
@@ -191,12 +191,13 @@ def add_vehicle(vehicle_hash_table: VehicleHashTable):
         return handle_error(e)
 
     try:
-        vehicle_hash_table.put( vehicle)
+        vehicle_hash_table.put(vehicle)
     except DuplicateVehicleFound as e:
         return handle_error(e)
 
     print(f"{green}{bold}Vehicle added successfully{end}")
     input("Press Enter to continue...")
+
 
 def remove_vehicle(vehicle_hash_table: VehicleHashTable):
     """Removes a vehicle from the hash table.
@@ -256,7 +257,8 @@ def update_vehicle(graph: Graph, vehicle_hash_table: VehicleHashTable):
     # Check for path and calculate distance between location
     try:
         distance_to_dest, _ = graph.dijkstra(location_id, destination_id)
-        print(f"{green}{bold}Path from {location_node.get_label()} to {destination_node.get_label()} found with a distance of {distance_to_dest}{end}")
+        print(f"{green}{bold}Path from {location_node.get_label()} to {destination_node.get_label()} found with a "
+              f"distance of {distance_to_dest}{end}")
     except PathNotFound as e:
         return handle_error(e)
 
@@ -265,7 +267,7 @@ def update_vehicle(graph: Graph, vehicle_hash_table: VehicleHashTable):
         new_battery_lvl = int(input("Enter battery level (0-100): "))
     except ValueError:
         return handle_error(f"{red}{bold}Please enter a valid input.{end}")
-    
+
     try:
         vehicle.set_battery_level(new_battery_lvl)
         vehicle.set_location(location_node)
@@ -320,6 +322,7 @@ def sort_by_distance(vehicles: numpy.ndarray, vehicle_sort_heap: VehicleSortHeap
 
     Args:
         vehicles: numpy.ndarray of vehicles to sort.
+        vehicle_sort_heap: VehicleSortHeap object to store Vehicles for heapsort.
 
     Returns:
         numpy.ndarray: Sorted array of vehicles.
@@ -330,8 +333,9 @@ def sort_by_distance(vehicles: numpy.ndarray, vehicle_sort_heap: VehicleSortHeap
     """
     if not len(vehicles):
         return numpy.array([])
-    
+
     return vehicle_sort_heap.heapsort_vehicles(vehicles)
+
 
 def sort_by_battery(vehicles: numpy.ndarray):
     """Sorts vehicles by battery level.
@@ -347,6 +351,7 @@ def sort_by_battery(vehicles: numpy.ndarray):
     sorted_vehicles = quick_sort(vehicles)
     return sorted_vehicles
 
+
 def add_location(graph: Graph):
     """Adds a location to the graph.
 
@@ -360,6 +365,7 @@ def add_location(graph: Graph):
     except VertexExistsError as e:
         return handle_error(e)
     input("Press Enter to continue...")
+
 
 def add_road(graph: Graph):
     """Adds a road to the graph.
@@ -412,6 +418,9 @@ def _print_vehicle_from_arr(vehicle_arr: numpy.ndarray, full_info: bool):
     """
     for vehicle in vehicle_arr:
         if full_info:
-            print(f"{bold}{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
+            print(f"{bold}{vehicle} | Battery Level: {vehicle.get_battery_level()}"
+                  f" | Location: {vehicle.get_location()}"
+                  f" | Destination: {vehicle.get_destination()}"
+                  f" | Distance to Destination: {vehicle.get_distance_to_destination()}")
         else:
             print(f"{vehicle}")
