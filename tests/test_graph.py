@@ -1,14 +1,16 @@
 """
 test_graph.py
+
+This file contains the tests for the Graph class.
+
 DSA [COMP1002] Assignment
 Author: Jai Dutta
 Student ID: 22073372
-This file contains the tests for the Graph class.
 """
 import pytest
 
+# Now use this import statement
 from Graph import Graph, VertexNotFoundError, EdgeToSameVertex, EdgeExistsError, VertexExistsError
-
 
 @pytest.fixture
 def empty_graph():

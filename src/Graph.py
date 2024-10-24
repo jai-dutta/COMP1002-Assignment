@@ -146,7 +146,7 @@ class Graph:
             VertexExistsError: If a vertex with the given label already exists.
         """
         # If existing vertex with the same label, throw a VertexExistsError
-        if self._find_vertex(label):
+        if self.find_vertex(label):
             raise VertexExistsError("Duplicate location found.")
 
         # Create new vertex object with the given label and value
@@ -205,8 +205,8 @@ class Graph:
             raise EdgeExistsError("Road exists. Cannot add multiple roads in a simple graph.")
 
         # Find the two given vertices from label
-        vertex1 = self._find_vertex(label1)
-        vertex2 = self._find_vertex(label2)
+        vertex1 = self.find_vertex(label1)
+        vertex2 = self.find_vertex(label2)
 
         # If both vertices have been found, add the edge (but check if they are the same vertex first)
         if vertex1 and vertex2:
@@ -234,8 +234,8 @@ class Graph:
             raise EdgeExistsError("Road to delete does not exist.")
 
         # Find the two given vertices form label
-        vertex1 = self._find_vertex(label1)
-        vertex2 = self._find_vertex(label2)
+        vertex1 = self.find_vertex(label1)
+        vertex2 = self.find_vertex(label2)
         # If both vertices have been found, remove the edge (but check if they are the same vertex first)
         if vertex1 and vertex2:
             if vertex1 != vertex2:
@@ -253,7 +253,7 @@ class Graph:
         Returns:
             True if the vertex exists, False otherwise.
         """
-        return True if self._find_vertex(label) else False
+        return True if self.find_vertex(label) else False
 
     def get_vertex_count(self) -> int:
         """Get the vertex count.
@@ -275,7 +275,7 @@ class Graph:
         Raises:
             VertexNotFoundError: If the specified vertex is not found.
         """
-        vertex = self._find_vertex(label)
+        vertex = self.find_vertex(label)
         if vertex:
             return vertex.get_adjacent()
         else:
@@ -291,8 +291,8 @@ class Graph:
         Returns:
             True if the vertices are adjacent, False otherwise.
         """
-        vertex1 = self._find_vertex(label1)
-        vertex2 = self._find_vertex(label2)
+        vertex1 = self.find_vertex(label1)
+        vertex2 = self.find_vertex(label2)
         if vertex1 and vertex2:
             for vertex, _ in vertex1.get_adjacent():
                 if vertex2 == vertex:
@@ -334,7 +334,7 @@ class Graph:
                 print(matrix[row][col], end="\t") # Print the element in the 2d array
             print()
 
-    def _find_vertex(self, label: str) -> GraphVertex | None:
+    def find_vertex(self, label: str) -> GraphVertex | None:
         """Find a vertex given a label within the graph.
 
         Args:
@@ -379,8 +379,8 @@ class Graph:
             raise VertexNotFoundError("Cannot find one or both locations to perform dijkstra's algorithm")
 
         # Get the vertex objects from the labels
-        start = self._find_vertex(start_label)
-        end = self._find_vertex(end_label)
+        start = self.find_vertex(start_label)
+        end = self.find_vertex(end_label)
 
         # convert the linked list of vertices to a numpy array to use indexing
         vertices_list = np.empty(self.count, dtype=object)
@@ -474,14 +474,13 @@ class Graph:
         for vertex in self.vertices:
             vertex.get_value().clear_visited()
 
-        v = self._find_vertex(start_label)  # Start from the first vertex
-        end = self._find_vertex(end_label)
+        v = self.find_vertex(start_label)  # Start from the first vertex
+        end = self.find_vertex(end_label)
         v.set_visited()  # Mark it as visited
         q.enqueue(v)  # Enqueue the start vertex
 
         while not q.is_empty():
             v = q.dequeue()
-
             for w, _ in v.get_adjacent():
                 if w == end:
                     return True

@@ -9,7 +9,8 @@ Student ID: 22073372
 
 import os
 
-from Graph import PathNotFound, VertexExistsError, EdgeExistsError, VertexNotFoundError, EdgeToSameVertex
+import numpy
+from Graph import PathNotFound, VertexExistsError, EdgeExistsError, VertexNotFoundError, EdgeToSameVertex, Graph
 from Sorting import *
 from Vehicle import *
 from VehicleHashTable import *
@@ -21,26 +22,7 @@ bold = "\033[1m"
 negative = "\033[7m"
 end = "\033[0m"
 
-"""
-Dictionary of menu options for the simulation.
-Key: Integer input
-Value: String of the menu option
-"""
-menu_options = {
-    1: "Add a new vehicle",
-    2: "Remove a vehicle",
-    3: "Update a vehicle",
-    4: "Display all vehicles",
-    5: "Find nearest vehicle",
-    6: "Find highest battery level",
-    7: "Add a location",
-    8: "Add a road",
-    9: "Check path existence",
-    10: "Exit"
-}
-
-
-def print_menu(options: dict):
+def print_menu():
     """Prints the menu.
 
     Args:
@@ -52,29 +34,41 @@ def print_menu(options: dict):
         None
 
     Note:
-        ASCII Art generated from https://patorjk.com/software/taag :)
+        ASCII Art generated from https://patorjk.com/software/taag + https://ozh.github.io/ascii-tables/ 
     """
-    print("-" * 50)
+
+
+    menu_options = f"""
+╔════════════════════════════════╦══════════════════════════╗
+║            Vehicle             ║        Locations         ║
+╠════════════════════════════════╬══════════════════════════╣
+║ [{green}1{end}] Add a vehicle              ║ [{green}7{end}] Add a location       ║
+║ [{green}2{end}] Remove a vehicle           ║ [{green}8{end}] Add a road           ║
+║ [{green}3{end}] Update a vehicle           ║ [{green}9{end}] Check road existence ║
+║ [{green}4{end}] Display all vehicles       ║                          ║
+║ [{green}5{end}] Find nearest vehicle       ║                          ║
+║ [{green}6{end}] Find highest battery level ║                          ║
+╠════════════════════════════════╩══════════════════════════╣
+║ [{red}10{end}] Exit                                                 ║
+╚═══════════════════════════════════════════════════════════╝"""
+
     print(f"""
-     █████╗ ██╗   ██╗███╗   ███╗███████╗    
-    ██╔══██╗██║   ██║████╗ ████║██╔════╝    
-    ███████║██║   ██║██╔████╔██║███████╗    
-    ██╔══██║╚██╗ ██╔╝██║╚██╔╝██║╚════██║    
-    ██║  ██║ ╚████╔╝ ██║ ╚═╝ ██║███████║    
-    ╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚══════╝    
-    ███╗   ███╗███████╗███╗   ██╗██╗   ██╗  
-    ████╗ ████║██╔════╝████╗  ██║██║   ██║  
-    ██╔████╔██║█████╗  ██╔██╗ ██║██║   ██║  
-    ██║╚██╔╝██║██╔══╝  ██║╚██╗██║██║   ██║  
-    ██║ ╚═╝ ██║███████╗██║ ╚████║╚██████╔╝  
-    ╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝ ╚═════╝""")
-    print("-" * 50)
-    for key, value in menu_options.items():
-        print(f"\t{key}. {value}")
-    print("-" * 50)
+            █████╗ ██╗   ██╗███╗   ███╗███████╗    
+            ██╔══██╗██║   ██║████╗ ████║██╔════╝    
+            ███████║██║   ██║██╔████╔██║███████╗    
+            ██╔══██║╚██╗ ██╔╝██║╚██╔╝██║╚════██║    
+            ██║  ██║ ╚████╔╝ ██║ ╚═╝ ██║███████║    
+            ╚═╝  ╚═╝  ╚═══╝  ╚═╝     ╚═╝╚══════╝    
+            ███╗   ███╗███████╗███╗   ██╗██╗   ██╗  
+            ████╗ ████║██╔════╝████╗  ██║██║   ██║  
+            ██╔████╔██║█████╗  ██╔██╗ ██║██║   ██║  
+            ██║╚██╔╝██║██╔══╝  ██║╚██╗██║██║   ██║  
+            ██║ ╚═╝ ██║███████╗██║ ╚████║╚██████╔╝  
+            ╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝ ╚═════╝""")
+    print(menu_options)
 
 
-def get_choice(options: dict):
+def get_choice():
     """Grabs and validates the user's choice from the menu options.
 
     Args:
@@ -86,8 +80,8 @@ def get_choice(options: dict):
     while True:
         try:
             choice = int(input("Please enter option: "))
-            if choice not in menu_options:
-                print(f"{red}{bold}Invalid input. Please enter a number between 1 and {len(menu_options)}.{end}")
+            if choice not in range(1, 11):
+                print(f"{red}{bold}Invalid input. Please enter a number between 1 and 10.{end}")
             else:
                 return choice
         except ValueError:
@@ -116,99 +110,106 @@ def main_menu(graph, vehicle_hash_table):
 
         clear_screen()
 
-        print_menu(menu_options)
+        print_menu()
 
         # Print locations
         print("Locations: ")
         print()
         display_graph(graph)
-        print("-" * 50)
+        print("═" * 50)
 
         # Print vehicles
         print("\nVehicles: ")
         print()
         _print_vehicle_from_arr(vehicles, False)
-        print("-" * 50)
+        print("═" * 50)
 
         # Get user choice
-        choice = get_choice(menu_options)
+        choice = get_choice()
 
         # Match user choice to menu option
         match choice:
+            # Add vehicle
             case 1:
                 add_vehicle(vehicle_hash_table)
 
+            # Remove vehicle    
             case 2:
                 remove_vehicle(vehicle_hash_table)
 
+            # Update vehicle
             case 3:
                 update_vehicle(graph, vehicle_hash_table)
 
+            # Display vehicles
             case 4:
-                display_vehicles(vehicle_hash_table)
+                display_sorted_vehicles(vehicle_hash_table)
 
+            # Find nearest vehicle
             case 5:
                 sorted_vehicles = sort_by_distance(vehicles)
-                if len(vehicles) > 0:
-                    vehicle = sorted_vehicles[0]
-                    print(
-                        f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
-                    input("Press Enter to continue...")
-
-            case 6:
-                sorted_vehicles = sort_by_battery(vehicles)
-                if len(vehicles) > 0:
+                if len(sorted_vehicles) > 0:
                     vehicle = sorted_vehicles[0]
                     print(f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
                     input("Press Enter to continue...")
+                else:
+                    handle_error(f"{red}{bold}No vehicles in the system.{end}")
 
+            # Find highest battery level
+            case 6:
+                sorted_vehicles = sort_by_battery(vehicles)
+                if len(sorted_vehicles) > 0:
+                    vehicle = sorted_vehicles[0]
+                    print(f"{vehicle} | Battery Level: {vehicle.get_battery_level()} | Location: {vehicle.get_location()} | Destination: {vehicle.get_destination()} | Distance to Destination: {vehicle.get_distance_to_destination()}")
+                    input("Press Enter to continue...")
+                else:
+                    handle_error(f"{red}{bold}No vehicles in the system.{end}")
+
+            # Add location
             case 7:
                 add_location(graph)
 
+            # Add road
             case 8:
                 add_road(graph)
 
+            # Check path
             case 9:
                 check_path(graph)
 
+            # Exit
             case 10:
                 print("Thank you for using the Autonomous Vehicle Management System. Goodbye!")
                 running = False
 
-def add_vehicle(vehicle_hash_table):
+def add_vehicle(vehicle_hash_table: VehicleHashTable):
     """Adds a vehicle to the hash table.
 
     Args:
         vehicle_hash_table: Hash table of the vehicles in the simulation.
     """
+    
     vehicle_id = input("Enter vehicle ID: ")
+
     try:
         battery_level = int(input("Enter battery level (0-100): "))
     except ValueError:
-        print(f"{red}{bold}Please enter a valid input.{end}")
-        input("Press Enter to continue...")
-        return
+        return handle_error(f"{red}{bold}Please enter a valid input.{end}")
 
     try:
         vehicle = Vehicle(vehicle_id, battery_level)
-
     except InvalidBatteryException as e:
-        print(f"{red}{bold}Error: {e}{end}")
-        input("Press Enter to continue...")
-        return
+        return handle_error(e)
 
     try:
         vehicle_hash_table.put(vehicle_id, vehicle)
-
     except DuplicateVehicleFound as e:
-        print(f"{red}{bold}Error: {e}{end}")
-        input("Press Enter to continue...")
-        return
+        return handle_error(e)
 
     print(f"{green}{bold}Vehicle added successfully{end}")
     input("Press Enter to continue...")
 
-def remove_vehicle(vehicle_hash_table):
+def remove_vehicle(vehicle_hash_table: VehicleHashTable):
     """Removes a vehicle from the hash table.
 
     Args:
@@ -221,72 +222,78 @@ def remove_vehicle(vehicle_hash_table):
         print(f"{green}{bold}Vehicle removed successfully{end}")
 
     except VehicleNotFoundError as e:
-        print(f"{red}{bold}Error: {e}{end}")
-        input("Press Enter to continue...")
-        return
+        return handle_error(e)
 
     input("Press Enter to continue...")
 
-def update_vehicle(graph, vehicle_hash_table):
+def update_vehicle(graph: Graph, vehicle_hash_table: VehicleHashTable):
     """Updates a vehicle in the hash table.
 
     Args:
         graph: Graph of the simulation.
         vehicle_hash_table: Hash table of the vehicles in the simulation.
     """
+
+    # Get vehicle ID and validate it to make sure the vehicle exists.
     vehicle_id = input("Enter vehicle ID: ")
     try:
         vehicle = vehicle_hash_table.get(vehicle_id)
         print(f"{green}{bold}Vehicle found successfully{end}")
     except VehicleNotFoundError as e:
-        print(f"{red}{bold}Error: {e}{end}")
-        input("Press Enter to continue...")
-        return
+        return handle_error(e)
 
+    # Get the location of the vehicle and validate it to make sure the location exists.
     location_id = input("Enter current location ID: ")
-    if graph.has_vertex(location_id):
+    location_node = graph.find_vertex(location_id)
+    if location_node:
         print(f"{green}{bold}Location found{end}")
-        vehicle.set_location(location_id)
+        vehicle.set_location(location_node)
     else:
-        print(f"{red}{bold}Error: Location not found{end}")
-        input("Press Enter to continue...")
-        return
+        return handle_error(f"{red}{bold}Location not found{end}")
 
+    # Get the destination of the vehicle and validate it to make sure the location exists.
     destination_id = input("Enter destination ID: ")
-    if graph.has_vertex(destination_id):
-        try:
-            distance_to_dest, path = graph.dijkstra(location_id, destination_id)
-            print(
-                f"{green}{bold}Path from {location_id} to {destination_id} found with a distance of {distance_to_dest}{end}")
-            vehicle.set_destination(destination_id)
-            vehicle.set_distance_to_destination(distance_to_dest)
-        except PathNotFound as e:
-            print(f"{red}{bold}Error: {e}{end}")
-            input("Press Enter to continue...")
-            return
-    else:
-        print(f"{red}{bold}Error: Destination not found{end}")
-        input("Press Enter to continue...")
-        return
+    destination_node = graph.find_vertex(destination_id)
+    if destination_node:
 
+        # Make sure user hasn't set a path from a location to itself
+        if destination_node == location_node:
+            return handle_error(f"{red}{bold}Destination cannot be the same as the current location{end}")
+
+    else:
+        return handle_error(f"{red}{bold}Destination not found{end}")
+
+    # Check for path and calculate distance between location
+    try:
+        distance_to_dest, _ = graph.dijkstra(location_id, destination_id)
+        print(f"{green}{bold}Path from {location_node.get_label()} to {destination_node.get_label()} found with a distance of {distance_to_dest}{end}")
+    except PathNotFound as e:
+        return handle_error(e)
+
+    # Get new battery level for the vehicle.
     try:
         new_battery_lvl = int(input("Enter battery level (0-100): "))
     except ValueError:
-        print(f"{red}{bold}Please enter a valid input.{end}")
-        input("Press Enter to continue...")
-        return
+        return handle_error(f"{red}{bold}Please enter a valid input.{end}")
+    
     try:
         vehicle.set_battery_level(new_battery_lvl)
-        vehicle.set_destination(destination_id)
-        vehicle.set_location(location_id)
+        vehicle.set_location(location_node)
+        vehicle.set_destination(destination_node)
     except InvalidBatteryException as e:
-        print(f"{red}{bold}Error: {e}{end}")
-        input("Press Enter to continue...")
-        return
+        return handle_error(e)
+
     print(f"{green}{bold}Vehicle updated successfully{end}")
     input("Press Enter to continue...")
 
-def display_vehicles(vehicle_hash_table):
+
+def handle_error(e):
+    print(f"{red}{bold}Error: {e}{end}")
+    input("Press Enter to continue...")
+    return
+
+
+def display_sorted_vehicles(vehicle_hash_table: VehicleHashTable):
     """Displays all vehicles in the hash table.
 
     Args:
@@ -299,44 +306,45 @@ def display_vehicles(vehicle_hash_table):
                            "\n[2]. Distance to destination [Asc]"
                            "\nInput: "))
     except ValueError:
-        print(f"{red}{bold}Please enter a valid input.{end}")
-        input("Press Enter to continue...")
-        return
+        return handle_error(f"{red}{bold}Please enter a valid input.{end}")
 
     if choice == 1:
         sorted_vehicles = sort_by_battery(vehicles)
-        if len(vehicles) > 0:
-            _print_vehicle_from_arr(sorted_vehicles, True)
-            input("Press Enter to continue...")
 
     elif choice == 2:
         sorted_vehicles = sort_by_distance(vehicles)
-        if len(vehicles) > 0:
-            _print_vehicle_from_arr(sorted_vehicles, True)
-            input("Press Enter to continue...")
 
     else:
         print(f"{red}{bold}Please enter a valid input.{end}")
         input("Press Enter to continue...")
 
-def sort_by_distance(vehicles):
+    if len(sorted_vehicles) > 0:
+        _print_vehicle_from_arr(sorted_vehicles, True)
+        input("Press Enter to continue...")
+    else:
+        handle_error(f"{red}{bold}No vehicles in the system.{end}")
+
+
+def sort_by_distance(vehicles: numpy.ndarray) -> numpy.ndarray:
     """Sorts vehicles by distance to destination.
 
     Args:
-        vehicles: List of vehicles to sort.
+        vehicles: numpy.ndarray of vehicles to sort.
 
     Returns:
-        list: Sorted list of vehicles.
-    """
-    if len(vehicles) > 0:
-        sort_heap = VehicleSortHeap(len(vehicles))
-        sorted_vehicles = sort_heap.heapsort_vehicles(vehicles)
-        return sorted_vehicles
-    else:
-        print(f"{red}{bold}No vehicles in the system.{end}")
-        input("Press Enter to continue...")
+        numpy.ndarray: Sorted array of vehicles.
+        Returns empty array if input is empty.
 
-def sort_by_battery(vehicles):
+    Note:
+        Sorting is done based on vehicle's distance to destination.
+    """
+    if not len(vehicles):
+        return numpy.array([])
+    
+    sort_heap = VehicleSortHeap(len(vehicles))
+    return sort_heap.heapsort_vehicles(vehicles)
+
+def sort_by_battery(vehicles: numpy.ndarray):
     """Sorts vehicles by battery level.
 
     Args:
@@ -345,14 +353,12 @@ def sort_by_battery(vehicles):
     Returns:
         list: Sorted list of vehicles.
     """
-    if len(vehicles) > 0:
-        sorted_vehicles = quick_sort(vehicles)
-        return sorted_vehicles
-    else:
-        print(f"{red}{bold}No vehicles in the system.{end}")
-        input("Press Enter to continue...")
+    if not len(vehicles):
+        return numpy.array([])
+    sorted_vehicles = quick_sort(vehicles)
+    return sorted_vehicles
 
-def add_location(graph):
+def add_location(graph: Graph):
     """Adds a location to the graph.
 
     Args:
@@ -363,10 +369,10 @@ def add_location(graph):
         graph.add_vertex(location_id)
         print(f"{green}{bold}Location added successfully{end}")
     except VertexExistsError as e:
-        print(f"{red}{bold}Error: {e}{end}")
+        return handle_error(e)
     input("Press Enter to continue...")
 
-def add_road(graph):
+def add_road(graph: Graph):
     """Adds a road to the graph.
 
     Args:
@@ -379,13 +385,12 @@ def add_road(graph):
         graph.add_edge(vertex1_id, vertex2_id, weight)
         print(f"{green}{bold}Road added successfully{end}")
     except (EdgeExistsError, EdgeToSameVertex, VertexNotFoundError) as e:
-        print(f"{red}{bold}Error: {e}{end}")
+        return handle_error(e)
     except ValueError:
-        print(f"{red}{bold}Please enter a valid input.{end}")
-    input("Press Enter to continue...")
+        return handle_error(f"{red}{bold}Please enter a valid input.{end}")
 
 
-def check_path(graph):
+def check_path(graph: Graph):
     """Checks if a path exists between two locations.
 
     Args:
@@ -396,14 +401,11 @@ def check_path(graph):
         vertex2_id = input("Enter second location ID: ")
         distance, _ = graph.dijkstra(vertex1_id, vertex2_id)
         print(f"{green}A path exists between {vertex1_id} and {vertex2_id}, with a distance of {distance}.{end}")
-    except PathNotFound as e:
-        print(f"{red}{bold}Error: {e}{end}")
-    except VertexNotFoundError as e:
-        print(f"{red}{bold}Error: {e}{end}")
-    input("Press Enter to continue...")
+    except (VertexNotFoundError, PathNotFound) as e:
+        return handle_error(e)
 
 
-def display_graph(graph):
+def display_graph(graph: Graph):
     """Displays the graph.
 
     Args:
@@ -411,7 +413,7 @@ def display_graph(graph):
     """
     graph.display_as_list()
 
-def _print_vehicle_from_arr(vehicle_arr, full_info: bool):
+def _print_vehicle_from_arr(vehicle_arr: numpy.ndarray, full_info: bool):
     """Prints vehicles from an array.
 
     Args:

@@ -1,9 +1,11 @@
 """
 Main.py
+
+This file runs the simulation.
+
 DSA [COMP1002] Assignment
 Author: Jai Dutta
 Student ID: 22073372
-This file runs the simulation.
 """
 
 from Graph import *

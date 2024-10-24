@@ -256,16 +256,29 @@ class LinkedList:
         return self.head is None
 
     def peek_first(self):
+        """
+        Return the value of the first node in the linked list.
+        Returns:
+            The value of the first node in the linked list.
+        """
         if self.is_empty():
             raise ListEmpty()
         return self.head.get_value()
 
     def peek_last(self):
+        """
+        Return  the value of the last node in the linked list.
+        Returns:
+            The value of the last node in the linked list.
+        """
         if self.is_empty():
             raise ListEmpty()
         return self.tail.get_value()
 
     def remove_first(self):
+        """
+        Remove the first node in the linked list.
+        """
         if self.is_empty():
             raise ListEmpty()
 
@@ -280,6 +293,9 @@ class LinkedList:
         return node_value
 
     def remove_last(self):
+        """
+        Remove the last node in the linked list.
+        """
         if self.is_empty():
             raise ListEmpty()
         # if removing last node, set head to none
@@ -295,6 +311,11 @@ class LinkedList:
         return node_value
 
     def remove_at(self, index):
+        """
+        Remove the node at the given index.
+        Args:
+            index: The index of the node to remove.
+        """
         if self.is_empty():
             raise ListEmpty()
         if index < 0 or self.count - 1 < index:
@@ -320,5 +341,8 @@ class LinkedList:
 
 
 class ListEmpty(Exception):
+    """
+    An exception to handle when the linked list is empty.
+    """
     def __init__(self):
         super().__init__("ERROR - Linked list is empty!")
