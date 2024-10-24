@@ -33,16 +33,19 @@ class Vehicle:
     def __str__(self) -> str:
         return f"ID: {self.ID}"
 
+    def get_ID(self) -> str:
+        return self.ID
+
     def get_location(self) -> GraphVertex:
         return self.location
 
-    def get_destination(self):
+    def get_destination(self) -> GraphVertex:
         return self.destination
 
-    def get_distance_to_destination(self):
+    def get_distance_to_destination(self) -> float | int:
         return self.distance_to_destination
 
-    def get_battery_level(self):
+    def get_battery_level(self) -> int:
         return self.battery_level
 
     def set_location(self, location: GraphVertex):
@@ -56,7 +59,7 @@ class Vehicle:
             raise ValueError("Destination must be a GraphVertex")
         self.destination = destination
 
-    def set_distance_to_destination(self, distance: int):
+    def set_distance_to_destination(self, distance: float | int):
         if distance < 0:
             raise ValueError("Distance to destination must be positive")
         self.distance_to_destination = distance

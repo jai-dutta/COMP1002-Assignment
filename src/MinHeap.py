@@ -40,7 +40,7 @@ class PriorityQueueEntry:
 
 class MinHeap:
     """
-    A class to represent a MinHeap.
+    A class to represent a MinHeap used for priority queue for dijkstra's algorithm.
     Attributes:
         size: The size of the heap.
         heap: The heap.
@@ -94,6 +94,12 @@ class MinHeap:
             self.trickle_down(0, self.count)
 
         return root_node
+    
+    def peek(self) -> PriorityQueueEntry:
+        """
+        Peek at the root node of the heap.
+        """
+        return self.heap[0]
 
     def trickle_down(self, current_index: int, num_items: int):
         """
@@ -125,6 +131,7 @@ class MinHeap:
         Get the number of elements in the heap.
         """
         return self.count
+    
 
 
 class HeapFullException(Exception):
