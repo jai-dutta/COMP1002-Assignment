@@ -115,7 +115,7 @@ def main_menu(graph, vehicle_hash_table):
         # Print vehicles
         print("\nVehicles: ")
         print()
-        _print_vehicle_from_arr(vehicles, False)
+        display_vehicles_array(vehicles, False)
         print("═" * 50)
 
         # Get user choice
@@ -142,14 +142,16 @@ def main_menu(graph, vehicle_hash_table):
             # Find nearest vehicle
             case 5:
                 try:
-                    sort_heap.find_nearest_vehicle(vehicles)
+                    display_vehicles_array(np.array([sort_heap.find_nearest_vehicle(vehicles)]), True)
+                    input("Press Enter to continue..")
                 except VehiclesEmptyException as e:
                     handle_error(e)
 
             # Find the highest battery level
             case 6:
                 try:
-                    find_highest_battery_level(vehicles)
+                    display_vehicles_array(np.array([find_highest_battery_level(vehicles)]), True)
+                    input("Press Enter to continue..")
                 except VehiclesEmptyException as e:
                     handle_error(e)
 
@@ -311,7 +313,7 @@ def display_sorted_vehicles(vehicles: numpy.ndarray, sort_heap: VehicleSortHeap)
         return handle_error(f"{red}{bold}Please enter a valid input.{end}")
 
     if len(sorted_vehicles) > 0:
-        _print_vehicle_from_arr(sorted_vehicles, True)
+        display_vehicles_array(sorted_vehicles, True)
         input("Press Enter to continue...")
     else:
         return handle_error(f"{red}{bold}No vehicles are in the AVMS.{end}")
@@ -396,6 +398,7 @@ def check_path(graph: Graph):
         vertex2_id = input("Enter second location ID: ")
         distance, _ = graph.dijkstra(vertex1_id, vertex2_id)
         print(f"{green}A path exists between {vertex1_id} and {vertex2_id}, with a distance of {distance}.{end}")
+        input("Press Enter to continue...")
     except (VertexNotFoundError, PathNotFound) as e:
         return handle_error(e)
 
@@ -409,18 +412,18 @@ def display_graph(graph: Graph):
     graph.display_as_list()
 
 
-def _print_vehicle_from_arr(vehicle_arr: numpy.ndarray, full_info: bool):
+def display_vehicles_array(vehicle_arr: numpy.ndarray, full_info: bool):
     """Prints vehicles from an array.
 
     Args:
         vehicle_arr: Array of vehicles to print.
-        full_info: Boolean indicating whether to print full info or not.
+        full_info: Boolean indicating whether to print comprehensive info or not.
     """
     for vehicle in vehicle_arr:
         if full_info:
-            print(f"{bold}{vehicle} | Battery Level: {vehicle.get_battery_level()}"
+            print(f"{bold}{vehicle}{end} | Battery Level: {vehicle.get_battery_level()}"
                   f" | Location: {vehicle.get_location()}"
                   f" | Destination: {vehicle.get_destination()}"
                   f" | Distance to Destination: {vehicle.get_distance_to_destination()}")
         else:
-            print(f"{vehicle}")
+            print(f"{bold}{vehicle}{end}")

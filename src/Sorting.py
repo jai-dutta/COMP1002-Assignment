@@ -99,13 +99,15 @@ class VehicleSortHeap(MinHeap):
 
         return vehicles
 
-    def find_nearest_vehicle(self, vehicles: np.ndarray) -> Vehicle:
+    def find_nearest_vehicle(self, vehicles: np.ndarray) -> np.ndarray:
         """
-        Find the nearest vehicle to it's destination using heapsort.
+        Find the nearest vehicle to its destination using heapsort.
         """
-        if self.count == 0:
+        try:
+            vehicle = self.heapsort_vehicles(vehicles)[0]
+        except IndexError:
             raise VehiclesEmptyException("No vehicles are in the AVMS.")
-        return self.heapsort_vehicles(vehicles)[0]
+        return vehicle
 
 
 def quick_sort(arr: np.ndarray) -> np.ndarray:
@@ -146,7 +148,7 @@ def do_partitioning(arr: np.ndarray, left_index: int, right_index: int, pivot_in
     return store_index
 
 
-def find_highest_battery_level(vehicles: np.ndarray) -> Vehicle:
+def find_highest_battery_level(vehicles: np.ndarray) -> np.ndarray:
     """
     Find the vehicle with the highest battery level using quicksort.
     """
@@ -156,16 +158,10 @@ def find_highest_battery_level(vehicles: np.ndarray) -> Vehicle:
     else:
         raise VehiclesEmptyException("No vehicles are in the AVMS.")
 
-def find_nearest_vehicle(vehicles: np.ndarray) -> Vehicle:
-    """
-    Find the nearest vehicle to it's destination using heapsort.
-    """
-    heap = VehicleSortHeap(len(vehicles))
-    return heap.find_nearest_vehicle(vehicles)
 
 class VehiclesEmptyException(Exception):
     """
-    Exception raised when there are no vehicles in the array.
+    Exception raised when there are no vehicles for sorting.
     """
     pass
 
