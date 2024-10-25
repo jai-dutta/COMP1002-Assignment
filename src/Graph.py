@@ -7,7 +7,7 @@ DSA [COMP1002] Assignment
 Author: Jai Dutta
 Student ID: 22073372
 """
-import numpy as np
+
 from LinkedList import LinkedList
 from MinHeap import *
 from Queue import Queue
