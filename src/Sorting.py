@@ -110,12 +110,12 @@ class VehicleSortHeap(MinHeap):
         return vehicle
 
 
-def quick_sort(arr: np.ndarray) -> np.ndarray:
+def quick_sort(vehicles: np.ndarray) -> np.ndarray:
     """
     Main quicksort wrapper function.
     """
-    quick_sort_recurse(arr, 0, len(arr) - 1)
-    return arr
+    quick_sort_recurse(vehicles, 0, len(vehicles) - 1)
+    return vehicles
 
 
 def quick_sort_recurse(arr: np.ndarray, left_index: int, right_index: int):

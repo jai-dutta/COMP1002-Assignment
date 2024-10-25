@@ -9,7 +9,6 @@ Student ID: 22073372
 """
 import pytest
 
-# Now use this import statement
 from Graph import *
 
 @pytest.fixture

@@ -7,6 +7,7 @@ DSA [COMP1002] Assignment
 Author: Jai Dutta
 Student ID: 22073372
 """
+import numpy
 
 from LinkedList import LinkedList
 from MinHeap import *
@@ -80,18 +81,7 @@ class GraphVertex:
             vertex: The adjacent GraphVertex object.
             weight: The weight of the edge connecting to the adjacent vertex.
         """
-        # Create a flag to check if the vertex was inserted
-        inserted = False
-        # Iterate through the linked list and insert the adjacent vertex and its weight in the correct position (alphabetically (this is a remnant from the Practical, not needed for the assignment as using weighted edges with Dijkstra's, instead of BFS/DFS))
-        for i in range(len(self.links)):
-            current_vertex, current_weight = self.links[i].get_value()
-            if vertex.get_label() < current_vertex.get_label():
-                self.links.insert_before((vertex, weight), i)
-                inserted = True
-                break
-        # If not inserted, add to the end
-        if not inserted:
-            self.links.insert_last((vertex, weight))
+        self.links.insert_last((vertex, weight))
 
     def remove_adjacent(self, vertex: "GraphVertex") -> None:
         """Remove an adjacent vertex.
@@ -120,6 +110,7 @@ class GraphVertex:
             A boolean indicating whether the vertex has been visited.
         """
         return self.visited
+
 
 
 class Graph:
@@ -263,7 +254,7 @@ class Graph:
         """
         return self.count
 
-    def get_adjacent(self, label: str) -> GraphVertex | None:
+    def get_adjacent(self, label: str) -> numpy.ndarray:
         """Get adjacent vertices to specified vertex.
 
         Args:
