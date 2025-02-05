@@ -18,8 +18,8 @@ The code is extensible, and concerns are clearly separated.
 
 ## Usage:
 
-To run the AVMS simulation: from src directory run `python Main.py`
-to run the tests: from root directory run `pytest`
+To run the AVMS simulation: from src directory run `python Main.py`  
+To run the tests: from project root directory run `pytest`
 
 ## Class and Method Descriptions
 
