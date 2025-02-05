@@ -1,7 +1,6 @@
 # COMP1002 Data Structures and Algorithms Assignment Report
 
 **Author:** Jai Dutta  
-**Student ID:** 22073372
 
 ## Introduction
 
